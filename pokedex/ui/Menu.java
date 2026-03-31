@@ -9,5 +9,6 @@ public class Menu {
         System.out.println("4. Batalhar");
         System.out.println("0. Sair");
         System.out.println("==================================");
+        System.out.print("Insira uma das opcoes acima: ");
     }
 }

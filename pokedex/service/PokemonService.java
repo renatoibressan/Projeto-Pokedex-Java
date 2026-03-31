@@ -1,39 +1,36 @@
 package pokedex.service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 
-import pokedex.exception.PokemonNaoEncontradoException;
-import pokedex.model.Pokemon;
-import pokedex.model.Stats;
-import pokedex.model.Tipo;
+import pokedex.exception.*;
+import pokedex.model.*;
 import pokedex.repository.PokemonRepository;
 
 public class PokemonService {
-    private TreeMap<String, Pokemon> pkmns;
     private PokemonRepository repository;
     public PokemonService(PokemonRepository repository) {
-        pkmns = new TreeMap<>();
         this.repository = repository;
     }
-    public Pokemon cadastrarPokemon(String nome, List<Tipo> tipo, Stats stats, int nivel) {
-        Pokemon pkmn = new Pokemon(nome, tipo, stats, nivel);
-        pkmns.put(nome, pkmn);
-        return pkmn;
+    public PokemonRepository getRepository() {
+        return repository;
+    }
+    public int gerarNovoId() {
+        return repository.listar().stream().mapToInt(Pokemon::getId).max().orElse(0) + 1;
+    }
+    public void cadastrarPokemon(String nome, List<Tipo> tipo, Stats stats, int nivel) throws DadoInvalidoException, PokemonNaoEncontradoException {
+        int id = gerarNovoId();
+        Pokemon p = new Pokemon(nome, tipo, stats, nivel, id);
+        repository.salvar(p);
     }
     public List<Pokemon> listarPokemons() {
-        List<Pokemon> listaPokemon = new ArrayList<>(pkmns.values());
-        return listaPokemon;
+        return repository.listar().stream().sorted(Comparator.comparingInt(Pokemon::getId)).toList();
     }
     public Pokemon buscarPorNome(String nome) throws PokemonNaoEncontradoException {
-        Pokemon pkmn = pkmns.get(nome);
-        if (pkmn == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
-        else return pkmn;
+        Pokemon pkmn = repository.buscarPorNome(nome);
+        return pkmn;
     }
     public void removerPokemon(String nome) throws PokemonNaoEncontradoException {
-        Pokemon pkmn = pkmns.get(nome);
-        if (pkmn == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
-        else pkmns.remove(nome);
+        repository.remover(nome);
     }
 }

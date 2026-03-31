@@ -2,6 +2,8 @@ package pokedex.main;
 
 import java.util.Scanner;
 
+import pokedex.repository.FilePokemonRepository;
+import pokedex.service.PokemonService;
 import pokedex.ui.Menu;
 
 public class Main {
@@ -9,7 +11,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int option = -1;
         String load = "...\n";
-        System.out.println("\n=========== POKEDEX MODULAR ===========\n");
+        FilePokemonRepository repo = new FilePokemonRepository("data/pokemons.txt");
+        PokemonService serv = new PokemonService(repo);
+        System.out.println("============= POKEDEX MODULAR =============");
         System.out.println("Desenvolvido por: Renato Ikeda Bressan");
         do {
             Menu.exibirMenu();
