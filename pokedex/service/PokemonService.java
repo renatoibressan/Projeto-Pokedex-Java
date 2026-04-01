@@ -15,15 +15,16 @@ public class PokemonService {
     public int gerarNovoId() {
         return repository.listar().stream().mapToInt(Pokemon::getId).max().orElse(0) + 1;
     }
-    public Pokemon cadastrarPokemon(String nome, List<Tipo> tipos, Stats stats, int nivel) throws DadoInvalidoException {
+    public void cadastrarPokemon(String nome, List<Tipo> tipos, Stats stats, Nature nature, int nivel) throws DadoInvalidoException {
         if (!repository.pokemonExiste(nome)) {
-            Pokemon p = new Pokemon(nome, tipos, stats, nivel);
+            Pokemon p = new Pokemon(nome, tipos, stats, nature, nivel);
             int id = gerarNovoId();
             p.setId(id);
+            p.setStats(stats, nature, nivel);
             repository.salvar(p);
-            return p;
+            return;
         }
-        return null;
+        throw new DadoInvalidoException("Ja existe um Pokemon com o nome " + nome + "!");
     }
     public List<Pokemon> listarPokemons() {
         return repository.listar().stream().sorted(Comparator.comparingInt(Pokemon::getId)).toList();

@@ -48,7 +48,7 @@ public class Main {
                     String nomePkmn = InputUtils.lerString("Insira o nome do Pokemon: ", sc);
                     String tipo1 = InputUtils.lerString("Insira o tipo principal: ", sc);
                     List<Tipo> tiposPkmn = new ArrayList<>();
-                    boolean tipoValido = false;
+                    boolean tipoValido = false, natureValida = false;
                     try {
                         Tipo tipo1Pkmn = Tipo.fromString(tipo1);
                         tiposPkmn.add(tipo1Pkmn);
@@ -75,13 +75,26 @@ public class Main {
                     int spAtk = InputUtils.lerInt("Insira o ataque especial do Pokemon: ", sc);
                     int spDef = InputUtils.lerInt("Insira a defesa especial do Pokemon: ", sc);
                     int speed = InputUtils.lerInt("Insira a velocidade do Pokemon: ", sc);
+                    Nature naturePkmn = Nature.HARDY;
+                    sc.nextLine();
+                    String nature = InputUtils.lerString("Insira a nature do Pokemon: ", sc);
+                    try {
+                        naturePkmn = Nature.fromString(nature);
+                        natureValida = true;
+                    } catch (DadoInvalidoException e) {
+                        System.out.println(e.getMessage());
+                    }
                     int nivel = InputUtils.lerInt("Insira o nivel do Pokemon: ", sc);
                     try {
                         Stats statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
                         try {
-                            if (tipoValido) {
-                                Pokemon p = serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn, nivel);
-                                if (p != null) pokemons.add(p);
+                            if ((tipoValido) && (natureValida)) {
+                                Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn, naturePkmn, nivel);
+                                int id = serv.gerarNovoId();
+                                p.setId(id);
+                                p.setStats(statsPkmn, naturePkmn, nivel);
+                                serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn, naturePkmn, nivel);
+                                pokemons.add(p);
                                 System.out.println("Pokemon " + nomePkmn + " cadastrado com sucesso!");
                             }
                         } catch (DadoInvalidoException e) {
@@ -103,12 +116,12 @@ public class Main {
                         }
                         System.out.print("\n");
                         System.out.println("Stats: ");
-                        System.out.println("HP: " + p.getStats().getHp());
-                        System.out.println("Ataque: " + p.getStats().getAtaque());
-                        System.out.println("Defesa: " + p.getStats().getDefesa());
-                        System.out.println("Ataque especial: " + p.getStats().getAtaqueEspecial());
-                        System.out.println("Defesa especial: " + p.getStats().getDefesaEspecial());
-                        System.out.println("Velocidade: " + p.getStats().getVelocidade());
+                        System.out.println("HP: " + p.getBaseStats().getHp());
+                        System.out.println("Ataque: " + p.getBaseStats().getAtaque());
+                        System.out.println("Defesa: " + p.getBaseStats().getDefesa());
+                        System.out.println("Ataque especial: " + p.getBaseStats().getAtaqueEspecial());
+                        System.out.println("Defesa especial: " + p.getBaseStats().getDefesaEspecial());
+                        System.out.println("Velocidade: " + p.getBaseStats().getVelocidade());
                         System.out.println("Nivel: " + p.getNivel());
                         System.out.println("---------------------------------------------------");
                     }
@@ -119,6 +132,7 @@ public class Main {
                     String nomeBusca = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
                     try {
                         Pokemon pkmn = serv.buscarPorNome(nomeBusca);
+                        pkmn.setStats(pkmn.getBaseStats(), pkmn.getNature(), pkmn.getNivel());
                         System.out.println("Pokemon " + nomeBusca + " encontrado com sucesso!");
                         System.out.println("---------------------------------------------------");
                         System.out.println("Nome: " + pkmn.getNome());
@@ -135,6 +149,7 @@ public class Main {
                         System.out.println("Ataque especial: " + pkmn.getStats().getAtaqueEspecial());
                         System.out.println("Defesa especial: " + pkmn.getStats().getDefesaEspecial());
                         System.out.println("Velocidade: " + pkmn.getStats().getVelocidade());
+                        System.out.println("Nature: " + pkmn.getNature());
                         System.out.println("Nivel: " + pkmn.getNivel());
                         System.out.println("---------------------------------------------------");
                     } catch (PokemonNaoEncontradoException e) {

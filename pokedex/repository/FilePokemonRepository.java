@@ -67,13 +67,13 @@ public class FilePokemonRepository implements PokemonRepository {
             linhaNumero++;
             try {
                 String[] partes = linha.split(";");
-                if (partes.length != 5) throw new IllegalArgumentException("Formato invalido!");
+                if (partes.length != 6) throw new IllegalArgumentException("Formato invalido!");
                 int id = Integer.parseInt(partes[0]);
                 String nomePkmn = partes[1];
                 String[] tiposString = partes[2].split(",");
-                List<Tipo> tipos = new ArrayList<>();
+                List<Tipo> tiposPkmn = new ArrayList<>();
                 for (String tipoStr : tiposString) {
-                    tipos.add(Tipo.fromString(tipoStr));
+                    tiposPkmn.add(Tipo.fromString(tipoStr));
                 }
                 String[] statsString = partes[3].split(",");
                 if (statsString.length != 6) throw new IllegalArgumentException("Formato invalido!");
@@ -83,11 +83,14 @@ public class FilePokemonRepository implements PokemonRepository {
                 int spAtk = Integer.parseInt(statsString[3]);
                 int spDef = Integer.parseInt(statsString[4]);
                 int speed = Integer.parseInt(statsString[5]);
-                int nivel = Integer.parseInt(partes[4]);
+                String nature = partes[4];
+                Nature naturePkmn = Nature.fromString(nature);
+                int nivel = Integer.parseInt(partes[5]);
                 Stats statsPkmn;
                 statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
-                Pokemon p = new Pokemon(nomePkmn, tipos, statsPkmn, nivel);
+                Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn, naturePkmn, nivel);
                 p.setId(id);
+                p.setStats(statsPkmn, naturePkmn, nivel);
                 listaPokemon.add(p);
             } catch (Exception e) {
                 System.out.println("Linha " + linhaNumero + " invalida!");
