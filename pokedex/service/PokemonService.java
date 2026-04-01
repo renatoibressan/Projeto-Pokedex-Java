@@ -12,22 +12,25 @@ public class PokemonService {
     public PokemonService(PokemonRepository repository) {
         this.repository = repository;
     }
-    public PokemonRepository getRepository() {
-        return repository;
-    }
     public int gerarNovoId() {
         return repository.listar().stream().mapToInt(Pokemon::getId).max().orElse(0) + 1;
     }
-    public void cadastrarPokemon(String nome, List<Tipo> tipo, Stats stats, int nivel) throws DadoInvalidoException, PokemonNaoEncontradoException {
-        int id = gerarNovoId();
-        Pokemon p = new Pokemon(nome, tipo, stats, nivel, id);
-        repository.salvar(p);
+    public Pokemon cadastrarPokemon(String nome, List<Tipo> tipos, Stats stats, int nivel) throws DadoInvalidoException {
+        if (!repository.pokemonExiste(nome)) {
+            Pokemon p = new Pokemon(nome, tipos, stats, nivel);
+            int id = gerarNovoId();
+            p.setId(id);
+            repository.salvar(p);
+            return p;
+        }
+        return null;
     }
     public List<Pokemon> listarPokemons() {
         return repository.listar().stream().sorted(Comparator.comparingInt(Pokemon::getId)).toList();
     }
     public Pokemon buscarPorNome(String nome) throws PokemonNaoEncontradoException {
         Pokemon pkmn = repository.buscarPorNome(nome);
+        if (pkmn == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
         return pkmn;
     }
     public void removerPokemon(String nome) throws PokemonNaoEncontradoException {

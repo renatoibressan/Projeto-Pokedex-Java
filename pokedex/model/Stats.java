@@ -41,7 +41,4 @@ public class Stats {
     public int getVelocidade() {
         return velocidade;
     }
-    public String toString() {
-        return hp + "/" + ataque + "/" + defesa + "/" + ataqueEspecial + "/" + defesaEspecial + "/" + velocidade;
-    }
 }

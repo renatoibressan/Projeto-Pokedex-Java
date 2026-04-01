@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class InputUtils {
     public static String lerString(String mensagem, Scanner sc) {
         System.out.print(mensagem);
-        sc.nextLine();
         String txt = sc.nextLine();
         return txt;
     }

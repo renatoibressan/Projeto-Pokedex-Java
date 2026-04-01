@@ -1,31 +1,155 @@
 package pokedex.main;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import pokedex.exception.*;
+import pokedex.model.*;
 import pokedex.repository.FilePokemonRepository;
 import pokedex.service.PokemonService;
 import pokedex.ui.Menu;
+import pokedex.util.InputUtils;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        Scanner sc = new Scanner(System.in);
-        int option = -1;
-        String load = "...\n";
-        FilePokemonRepository repo = new FilePokemonRepository("data/pokemons.txt");
-        PokemonService serv = new PokemonService(repo);
         System.out.println("============= POKEDEX MODULAR =============");
         System.out.println("Desenvolvido por: Renato Ikeda Bressan");
+        Scanner sc = new Scanner(System.in);
+        int option = -1;
+        String load = "...\n", caminhoArquivo = "pokedex/data/pokemons.txt", optionArquivo;
+        File arquivo = new File(caminhoArquivo);
+        List<Pokemon> pokemons = new ArrayList<>();
+        FilePokemonRepository repo = new FilePokemonRepository(caminhoArquivo);
+        PokemonService serv = new PokemonService(repo);
+        if (arquivo.exists() && arquivo.length() > 0) {
+            optionArquivo = InputUtils.lerString("Deseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
+            while (!optionArquivo.toUpperCase().equalsIgnoreCase("s") && !optionArquivo.toUpperCase().equalsIgnoreCase("n")) {
+                optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
+            }
+            if (optionArquivo.equalsIgnoreCase("s")) {
+                try {
+                    pokemons = repo.lerArquivo();
+                    repo.inserirPokemons(pokemons);
+                    System.out.println("Pokemons carregados com sucesso!");
+                } catch (IOException e) {
+                    System.out.println("Nao foi possivel ler o arquivo!");
+                }
+            }
+        }
         do {
             Menu.exibirMenu();
-            option = sc.nextInt();
+            option = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
             switch (option) {
                 case 1:
+                    sc.nextLine();
+                    String nomePkmn = InputUtils.lerString("Insira o nome do Pokemon: ", sc);
+                    String tipo1 = InputUtils.lerString("Insira o tipo principal: ", sc);
+                    List<Tipo> tiposPkmn = new ArrayList<>();
+                    boolean tipoValido = false;
+                    try {
+                        Tipo tipo1Pkmn = Tipo.fromString(tipo1);
+                        tiposPkmn.add(tipo1Pkmn);
+                        tipoValido = true;
+                        String optionTipo2 = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
+                        while (!optionTipo2.toUpperCase().equalsIgnoreCase("s") && !optionTipo2.toUpperCase().equalsIgnoreCase("n")) {
+                            optionTipo2 = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
+                        }
+                        if (optionTipo2.equalsIgnoreCase("s")) {
+                            String tipo2 = InputUtils.lerString("Insira o tipo secundario: ", sc);
+                            try {
+                                Tipo tipo2Pkmn = Tipo.fromString(tipo2);
+                                tiposPkmn.add(tipo2Pkmn);
+                            } catch (DadoInvalidoException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    } catch (DadoInvalidoException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    int hp = InputUtils.lerInt("Insira o HP do Pokemon: ", sc);
+                    int atk = InputUtils.lerInt("Insira o ataque do Pokemon: ", sc);
+                    int def = InputUtils.lerInt("Insira a defesa do Pokemon: ", sc);
+                    int spAtk = InputUtils.lerInt("Insira o ataque especial do Pokemon: ", sc);
+                    int spDef = InputUtils.lerInt("Insira a defesa especial do Pokemon: ", sc);
+                    int speed = InputUtils.lerInt("Insira a velocidade do Pokemon: ", sc);
+                    int nivel = InputUtils.lerInt("Insira o nivel do Pokemon: ", sc);
+                    try {
+                        Stats statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
+                        try {
+                            if (tipoValido) {
+                                Pokemon p = serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn, nivel);
+                                if (p != null) pokemons.add(p);
+                                System.out.println("Pokemon " + nomePkmn + " cadastrado com sucesso!");
+                            }
+                        } catch (DadoInvalidoException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    } catch (DadoInvalidoException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 2:
+                    List<Pokemon> listaPkmn = serv.listarPokemons();
+                    System.out.println("---------------------------------------------------");
+                    for (Pokemon p : listaPkmn) {
+                        System.out.println("Nome: " + p.getNome());
+                        System.out.println("Numero de Pokedex: #" + p.getId());
+                        System.out.print("Tipos: ");
+                        for (Tipo t : p.getTipos()) {
+                            System.out.print(t + " ");
+                        }
+                        System.out.print("\n");
+                        System.out.println("Stats: ");
+                        System.out.println("HP: " + p.getStats().getHp());
+                        System.out.println("Ataque: " + p.getStats().getAtaque());
+                        System.out.println("Defesa: " + p.getStats().getDefesa());
+                        System.out.println("Ataque especial: " + p.getStats().getAtaqueEspecial());
+                        System.out.println("Defesa especial: " + p.getStats().getDefesaEspecial());
+                        System.out.println("Velocidade: " + p.getStats().getVelocidade());
+                        System.out.println("Nivel: " + p.getNivel());
+                        System.out.println("---------------------------------------------------");
+                    }
+                    System.out.println("Pokemons listados com sucesso!");
                     break;
                 case 3:
+                    sc.nextLine();
+                    String nomeBusca = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    try {
+                        Pokemon pkmn = serv.buscarPorNome(nomeBusca);
+                        System.out.println("Pokemon " + nomeBusca + " encontrado com sucesso!");
+                        System.out.println("---------------------------------------------------");
+                        System.out.println("Nome: " + pkmn.getNome());
+                        System.out.println("Numero de Pokedex: #" + pkmn.getId());
+                        System.out.print("Tipos: ");
+                        for (Tipo t : pkmn.getTipos()) {
+                            System.out.print(t + " ");
+                        }
+                        System.out.print("\n");
+                        System.out.println("Stats: ");
+                        System.out.println("HP: " + pkmn.getStats().getHp());
+                        System.out.println("Ataque: " + pkmn.getStats().getAtaque());
+                        System.out.println("Defesa: " + pkmn.getStats().getDefesa());
+                        System.out.println("Ataque especial: " + pkmn.getStats().getAtaqueEspecial());
+                        System.out.println("Defesa especial: " + pkmn.getStats().getDefesaEspecial());
+                        System.out.println("Velocidade: " + pkmn.getStats().getVelocidade());
+                        System.out.println("Nivel: " + pkmn.getNivel());
+                        System.out.println("---------------------------------------------------");
+                    } catch (PokemonNaoEncontradoException e) {
+                        System.out.println(e.getLocalizedMessage());
+                    }
                     break;
                 case 4:
+                    sc.nextLine();
+                    String nomeRemocao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    try {
+                        serv.removerPokemon(nomeRemocao);
+                        System.out.println("Pokemon " + nomeRemocao + " removido com sucesso!");
+                    } catch (PokemonNaoEncontradoException e) {
+                        System.out.println(e.getLocalizedMessage());
+                    }
                     break;
                 case 0:
                     System.out.print("Retornando ao inicio");
@@ -46,6 +170,25 @@ public class Main {
                     }
             }
         } while (option != 0);
+        sc.nextLine();
+        optionArquivo = InputUtils.lerString("Deseja salvar os Pokemons em 'pokemons.txt'? (S/N): ", sc);
+        while (!optionArquivo.toUpperCase().equalsIgnoreCase("s") && !optionArquivo.toUpperCase().equalsIgnoreCase("n")) {
+            optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja salvar os Pokemons em 'pokemons.txt'? (S/N): ", sc);
+        }
+        if (optionArquivo.equalsIgnoreCase("s")) {
+            try {
+                repo.escreverArquivo(pokemons);
+                System.out.println("Pokemons salvos com sucesso!");
+            } catch (IOException e) {
+                System.out.println("Nao foi possivel escrever no arquivo!");
+            }
+        }
+        System.out.print("Encerrando o programa");
+        Thread.sleep(750);
+        for (char c : load.toCharArray()) {
+            System.out.print(c);
+            Thread.sleep(150);
+        }
         sc.close();
     }
 }

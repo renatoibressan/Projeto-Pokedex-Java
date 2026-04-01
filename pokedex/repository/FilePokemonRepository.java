@@ -6,37 +6,93 @@ import java.util.List;
 import java.util.TreeMap;
 
 import pokedex.exception.PokemonNaoEncontradoException;
-import pokedex.model.Pokemon;
+import pokedex.model.*;
+import pokedex.util.FileUtils;
 
 public class FilePokemonRepository implements PokemonRepository {
-    private TreeMap<String, Pokemon> pkmn;
+    private TreeMap<Integer, Pokemon> pkmn;
     private String caminhoArquivo;
     public FilePokemonRepository(String caminhoArquivo) {
         pkmn = new TreeMap<>();
         this.caminhoArquivo = caminhoArquivo;
     }
-    public void inserir(Pokemon p) {
-        pkmn.put(p.getNome(), p);
+    public void inserirPokemons(List<Pokemon> pokemons) {
+        for (Pokemon p : pokemons) {
+            pkmn.put(p.getId(), p);
+        }
     }
-    public void salvar(Pokemon p) throws PokemonNaoEncontradoException {
-        if (p == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
-        pkmn.put(p.getNome(), p);
+    public boolean pokemonExiste(String nome) {
+        for (Pokemon p : pkmn.values()) {
+            if (nome.equalsIgnoreCase(p.getNome())) return true;
+        }
+        return false;
+    }
+    public void salvar(Pokemon p) {
+        pkmn.put(p.getId(), p);
     }
     public List<Pokemon> listar() {
-        List<Pokemon> listaPokemon = new ArrayList<>();
+        List<Pokemon> listaPokemon = new ArrayList<>(pkmn.values());
         return listaPokemon;
     }
-    public Pokemon buscarPorNome(String nome) throws PokemonNaoEncontradoException {
-        Pokemon p = pkmn.get(nome);
-        if (p == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
-        return p;
+    public Pokemon buscarPorNome(String nome) {
+        for (Pokemon p : pkmn.values()) {
+            if (nome.equalsIgnoreCase(p.getNome())) return p;
+        }
+        return null;
     }
     public void remover(String nome) throws PokemonNaoEncontradoException {
-        Pokemon p = pkmn.get(nome);
-        if (p == null) throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
-        pkmn.remove(nome);
+        for (Pokemon p : pkmn.values()) {
+            if (nome.equalsIgnoreCase(p.getNome())) {
+                int id = p.getId();
+                pkmn.remove(id);
+                return;
+            }
+        }
+        throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
     }
-    void escreverArquivo(List<Pokemon> pokemons) throws IOException {
+    public void escreverArquivo(List<Pokemon> pokemons) throws IOException {
+        List<String> linhas = new ArrayList<>();
+        String linha;
+        for (Pokemon p : pokemons) {
+            linha = p.toFileString();
+            linhas.add(linha);
+        }
+        FileUtils.escrever(caminhoArquivo, linhas);
     }
-    // public List<Pokemon> lerArquivo() throws IOException {}
+    public List<Pokemon> lerArquivo() throws IOException {
+        List<Pokemon> listaPokemon = new ArrayList<>();
+        List<String> linhas = FileUtils.ler(caminhoArquivo);
+        int linhaNumero = 0;
+        for (String linha : linhas) {
+            linhaNumero++;
+            try {
+                String[] partes = linha.split(";");
+                if (partes.length != 5) throw new IllegalArgumentException("Formato invalido!");
+                int id = Integer.parseInt(partes[0]);
+                String nomePkmn = partes[1];
+                String[] tiposString = partes[2].split(",");
+                List<Tipo> tipos = new ArrayList<>();
+                for (String tipoStr : tiposString) {
+                    tipos.add(Tipo.fromString(tipoStr));
+                }
+                String[] statsString = partes[3].split(",");
+                if (statsString.length != 6) throw new IllegalArgumentException("Formato invalido!");
+                int hp = Integer.parseInt(statsString[0]);
+                int atk = Integer.parseInt(statsString[1]);
+                int def = Integer.parseInt(statsString[2]);
+                int spAtk = Integer.parseInt(statsString[3]);
+                int spDef = Integer.parseInt(statsString[4]);
+                int speed = Integer.parseInt(statsString[5]);
+                int nivel = Integer.parseInt(partes[4]);
+                Stats statsPkmn;
+                statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
+                Pokemon p = new Pokemon(nomePkmn, tipos, statsPkmn, nivel);
+                p.setId(id);
+                listaPokemon.add(p);
+            } catch (Exception e) {
+                System.out.println("Linha " + linhaNumero + " invalida!");
+            }
+        }
+        return listaPokemon;
+    }
 }

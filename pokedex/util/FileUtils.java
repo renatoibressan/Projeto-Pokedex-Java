@@ -10,7 +10,7 @@ import java.util.List;
 
 public class FileUtils {
     public static void escrever(String caminho, List<String> linhas) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminho, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(caminho))) {
             for (String linha : linhas) {
                 writer.write(linha);
                 writer.newLine();
@@ -21,10 +21,8 @@ public class FileUtils {
         List<String> linhas = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(caminho))) {
             String linha;
-            int idx = 0;
             while ((linha = reader.readLine()) != null) {
-                linhas.add(idx, linha);
-                idx++;
+                linhas.add(linha);
             }
         }
         return linhas;
