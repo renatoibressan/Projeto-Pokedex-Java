@@ -14,17 +14,15 @@ public class Pokemon {
     private Stats stats;
     private Nature nature;
     private int nivel;
-    public Pokemon(String nome, List<Tipo> tipos, Stats baseStats, Nature nature, int nivel) throws DadoInvalidoException {
+    public Pokemon(String nome, List<Tipo> tipos, Stats baseStats) throws DadoInvalidoException {
         this.nome = nome;
         if (tipos == null || tipos.isEmpty()) throw new DadoInvalidoException("Pokemon deve ter pelo menos 1 tipo!");
         if (tipos.size() > 2) throw new DadoInvalidoException("Pokemon nao pode ter mais de 2 tipos!");
         if (new HashSet<>(tipos).size() != tipos.size()) throw new DadoInvalidoException("Tipos duplicados nao sao permitidos!");
         this.tipos = tipos;
         this.baseStats = baseStats;
-        this.stats = new Stats(1, 1, 1, 1, 1, 1);
-        this.nature = nature;
-        if (nivel < 1 || nivel > 100) throw new DadoInvalidoException("Pokemon deve ser de nivel 1 a 100!");
-        this.nivel = nivel;
+        this.nature = Nature.HARDY;
+        this.nivel = 1;
     }
     public String getNome() {
         return nome;
@@ -38,19 +36,8 @@ public class Pokemon {
     public Stats getStats() {
         return stats;
     }
-    public Nature getNature() {
-        return nature;
-    }
-    public int getNivel() {
-        return nivel;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public void setStats(Stats baseStats, Nature nature, int nivel) {
+    public void setStats(Stats baseStats, Nature nature, int nivel) throws DadoInvalidoException {
+        this.stats = new Stats(baseStats.getHp(), baseStats.getAtaque(), baseStats.getDefesa(), baseStats.getAtaqueEspecial(), baseStats.getDefesaEspecial(), baseStats.getVelocidade());
         int hp, atk, def, spAtk, spDef, speed;
         hp = (int) Math.floor(((baseStats.getHp() * 2) * nivel) / 100) + nivel + 10;
         atk = (int) Math.floor(((baseStats.getAtaque() * 2) * nivel) / 100) + 5;
@@ -81,6 +68,25 @@ public class Pokemon {
         stats.setDefesaEspecial(spDef);
         stats.setVelocidade(speed);
     }
+    public Nature getNature() {
+        return nature;
+    }
+    public void setNature(Nature nature) {
+        this.nature = nature;
+    }
+    public int getNivel() {
+        return nivel;
+    }
+    public void setNivel(int nivel) throws DadoInvalidoException {
+        if (nivel < 1 || nivel > 100) throw new DadoInvalidoException("Pokemon deve ser de nivel 1 a 100!");
+        this.nivel = nivel;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public String toFileString() {
         StringBuilder tipoString = new StringBuilder();
         for (Tipo tipo : tipos) {
@@ -89,7 +95,7 @@ public class Pokemon {
         }
         if (tipoString.length() > 0) tipoString.setLength(tipoString.length() - 1);
         String statString = baseStats.getHp() + "," +  baseStats.getAtaque() + "," + baseStats.getDefesa() + "," + baseStats.getAtaqueEspecial() + "," + baseStats.getDefesaEspecial() + "," + baseStats.getVelocidade();
-        return id + ";" + nome + ";" + tipoString + ";" + statString + ";" + nature + ";" + nivel;
+        return id + ";" + nome + ";" + tipoString + ";" + statString;
     }
     public boolean temTipo(Tipo tipo) {
         if (tipo == null) return false;

@@ -27,4 +27,9 @@ public class FileUtils {
         }
         return linhas;
     }
+    public static void limpar(String caminho) throws IOException {
+        try (FileWriter writer = new FileWriter(caminho, false)) {
+            writer.write("");
+        }
+    }
 }

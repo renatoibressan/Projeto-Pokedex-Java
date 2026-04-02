@@ -8,7 +8,8 @@ public class Menu {
         System.out.println("3. Buscar Pokemon");
         System.out.println("4. Remover Pokemon");
         System.out.println("5. Simular batalha");
-        System.out.println("0. Sair");
+        System.out.println("6. Limpar o arquivo");
+        System.out.println("0. Sair do programa");
         System.out.println("==================================");
     }
 }

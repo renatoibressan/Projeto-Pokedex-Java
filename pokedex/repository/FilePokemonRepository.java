@@ -67,7 +67,7 @@ public class FilePokemonRepository implements PokemonRepository {
             linhaNumero++;
             try {
                 String[] partes = linha.split(";");
-                if (partes.length != 6) throw new IllegalArgumentException("Formato invalido!");
+                if (partes.length != 4) throw new IllegalArgumentException("Formato invalido!");
                 int id = Integer.parseInt(partes[0]);
                 String nomePkmn = partes[1];
                 String[] tiposString = partes[2].split(",");
@@ -83,19 +83,18 @@ public class FilePokemonRepository implements PokemonRepository {
                 int spAtk = Integer.parseInt(statsString[3]);
                 int spDef = Integer.parseInt(statsString[4]);
                 int speed = Integer.parseInt(statsString[5]);
-                String nature = partes[4];
-                Nature naturePkmn = Nature.fromString(nature);
-                int nivel = Integer.parseInt(partes[5]);
                 Stats statsPkmn;
                 statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
-                Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn, naturePkmn, nivel);
+                Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn);
                 p.setId(id);
-                p.setStats(statsPkmn, naturePkmn, nivel);
                 listaPokemon.add(p);
             } catch (Exception e) {
                 System.out.println("Linha " + linhaNumero + " invalida!");
             }
         }
         return listaPokemon;
+    }
+    public void limparArquivo() throws IOException {
+        FileUtils.limpar(caminhoArquivo);
     }
 }
