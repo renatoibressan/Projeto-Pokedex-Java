@@ -96,37 +96,12 @@ public class Main {
                 case 2:
                     List<Pokemon> listaPkmn = serv.listarPokemons();
                     System.out.println("---------------------------------------------------");
-                    for (Pokemon p : listaPkmn) {
-                        System.out.println("Nome: " + p.getNome());
-                        System.out.println("Numero de Pokedex: #" + String.format("%04d", p.getId()));
-                        System.out.print("Tipos: ");
-                        for (Tipo t : p.getTipos()) {
-                            System.out.print(t + " ");
-                        }
-                        System.out.print("\n");
-                        System.out.println("Stats: ");
-                        System.out.println("HP: " + p.getBaseStats().getHp());
-                        System.out.println("Ataque: " + p.getBaseStats().getAtaque());
-                        System.out.println("Defesa: " + p.getBaseStats().getDefesa());
-                        System.out.println("Ataque especial: " + p.getBaseStats().getAtaqueEspecial());
-                        System.out.println("Defesa especial: " + p.getBaseStats().getDefesaEspecial());
-                        System.out.println("Velocidade: " + p.getBaseStats().getVelocidade());
-                        System.out.println("---------------------------------------------------");
-                    }
-                    System.out.println("Pokemons listados com sucesso!");
-                    break;
-                case 3:
-                    sc.nextLine();
-                    String nomeBusca = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
-                    try {
-                        Pokemon pkmn = serv.buscarPorNome(nomeBusca);
-                        System.out.println("Pokemon " + nomeBusca + " encontrado com sucesso!");
-                        System.out.println("---------------------------------------------------");
+                    for (Pokemon pkmn : listaPkmn) {
                         System.out.println("Nome: " + pkmn.getNome());
                         System.out.println("Numero de Pokedex: #" + String.format("%04d", pkmn.getId()));
-                        System.out.print("Tipos: ");
+                        System.out.print("Tipos:");
                         for (Tipo t : pkmn.getTipos()) {
-                            System.out.print(t + " ");
+                            System.out.print(" " + t);
                         }
                         System.out.print("\n");
                         System.out.println("Stats: ");
@@ -137,6 +112,31 @@ public class Main {
                         System.out.println("Defesa especial: " + pkmn.getBaseStats().getDefesaEspecial());
                         System.out.println("Velocidade: " + pkmn.getBaseStats().getVelocidade());
                         System.out.println("---------------------------------------------------");
+                    }
+                    System.out.println("Pokemons listados com sucesso!");
+                    break;
+                case 3:
+                    sc.nextLine();
+                    String nomeBusca = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    try {
+                        Pokemon pkmn = serv.buscarPorNome(nomeBusca);
+                        System.out.println("---------------------------------------------------");
+                        System.out.println("Nome: " + pkmn.getNome());
+                        System.out.println("Numero de Pokedex: #" + String.format("%04d", pkmn.getId()));
+                        System.out.print("Tipos:");
+                        for (Tipo t : pkmn.getTipos()) {
+                            System.out.print(" " + t);
+                        }
+                        System.out.print("\n");
+                        System.out.println("Stats: ");
+                        System.out.println("HP: " + pkmn.getBaseStats().getHp());
+                        System.out.println("Ataque: " + pkmn.getBaseStats().getAtaque());
+                        System.out.println("Defesa: " + pkmn.getBaseStats().getDefesa());
+                        System.out.println("Ataque especial: " + pkmn.getBaseStats().getAtaqueEspecial());
+                        System.out.println("Defesa especial: " + pkmn.getBaseStats().getDefesaEspecial());
+                        System.out.println("Velocidade: " + pkmn.getBaseStats().getVelocidade());
+                        System.out.println("---------------------------------------------------");
+                        System.out.println("Pokemon " + nomeBusca + " encontrado com sucesso!");
                     } catch (PokemonNaoEncontradoException e) {
                         System.out.println(e.getMessage());
                     }
@@ -175,6 +175,10 @@ public class Main {
                             p2.setStats(p2.getBaseStats(), p2.getNature(), p2.getNivel());
                             System.out.println("---------------------------------------------------");
                             System.out.println("Dados de " + p1.getNome() + ":");
+                            System.out.print("Tipos:");
+                            for (Tipo t : p1.getTipos()) {
+                                System.out.print(" " + t);
+                            }
                             System.out.println("Nature: " + p1.getNature());
                             System.out.println("Nivel: " + p1.getNivel());
                             System.out.println("HP: " + p1.getStats().getHp());
@@ -185,6 +189,10 @@ public class Main {
                             System.out.println("Velocidade: " + p1.getStats().getVelocidade());
                             System.out.println("---------------------------------------------------");
                             System.out.println("Dados de " + p2.getNome() + ":");
+                            System.out.print("Tipos:");
+                            for (Tipo t : p2.getTipos()) {
+                                System.out.print(" " + t);
+                            }
                             System.out.println("Nature: " + p2.getNature());
                             System.out.println("Nivel: " + p2.getNivel());
                             System.out.println("HP: " + p2.getStats().getHp());
