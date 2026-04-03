@@ -18,12 +18,10 @@ public class BatalhaService {
         Golpe golpeP1, golpeP2;
         Pokemon primeiro = definirPrimeiro(p1, p2);
         Pokemon segundo = definirSegundo(p1, p2);
-        Pokemon vencedor;
         int vidaP1 = primeiro.getStats().getHp();
         int vidaP2 = segundo.getStats().getHp();
-        PrintUtils.clearScreen();
-        PrintUtils.slowPrint("---------------------------------------------------", 250);
-        PrintUtils.slowPrint("Batalha entre " + primeiro.getNome() + " e " + segundo.getNome() + " iniciada!", 375);
+        PrintUtils.slowPrint("---------------------------------------------------", 50);
+        PrintUtils.slowPrint("Batalha entre " + primeiro.getNome() + " e " + segundo.getNome() + " iniciada!", 50);
         while (true) {
             turno++;
             System.out.print("\n");
@@ -37,26 +35,20 @@ public class BatalhaService {
                 i++;
             }
             opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
-            while (opcaoGolpe < 1 || opcaoGolpe > 2) {
-                opcaoGolpe = InputUtils.lerInt("Opcao invalida!\nInsira uma das opcoes acima: ", sc);
-            }
-            if (opcaoGolpe == 1) golpeP1 = primeiro.getGolpes().getFirst();
-            else golpeP1 = primeiro.getGolpes().getLast();
-            if (golpeP1.getCategoria().equals("fisico")) danoP1 = calcularDanoFisico(primeiro, segundo, golpeP1);
-            else danoP1 = calcularDanoEspecial(primeiro, segundo, golpeP1);
+            while (opcaoGolpe < 1 || opcaoGolpe > 2) opcaoGolpe = InputUtils.lerInt("Opcao invalida!\nInsira uma das opcoes acima: ", sc);
+            golpeP1 = (opcaoGolpe == 1) ? primeiro.getGolpes().getFirst() : primeiro.getGolpes().getLast();
+            danoP1 = (golpeP1.getCategoria().equals("fisico")) ? calcularDanoFisico(primeiro, segundo, golpeP1) : calcularDanoEspecial(primeiro, segundo, golpeP1);
             danoP1 += calcularSTAB(primeiro, golpeP1, danoP1);
             danoP1 *= calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos());
-            vidaP2 -= (int) danoP1;
-            hpPerdido = (int) danoP1;
-            if (hpPerdido > vidaP2) hpPerdido += vidaP2;
-            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 250);
-            else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 250);
+            hpPerdido = (vidaP2 < (int)danoP1) ? vidaP2 : (int)danoP1;
+            vidaP2 -= (int)danoP1;
+            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 50);
+            else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
             if (vidaP2 <= 0) {
-                if (turno == 1) PrintUtils.slowPrint("O golpe " + golpeP1 + " foi um OH-KO!", 250);
-                else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 250);
-                PrintUtils.slowPrint("---------------------------------------------------", 250);
-                vencedor = primeiro;
-                return vencedor;
+                if (turno == 1) PrintUtils.slowPrint("O golpe " + golpeP1 + " foi um OH-KO!", 50);
+                else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                PrintUtils.slowPrint("---------------------------------------------------", 50);
+                return primeiro;
             }
             System.out.print("\n");
             System.out.println(primeiro.getNome() + " Lv." + primeiro.getNivel() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
@@ -69,26 +61,20 @@ public class BatalhaService {
                 i++;
             }
             opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
-            while (opcaoGolpe < 1 || opcaoGolpe > 2) {
-                opcaoGolpe = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
-            }
-            if (opcaoGolpe == 1) golpeP2 = segundo.getGolpes().getFirst();
-            else golpeP2 = segundo.getGolpes().getLast();
-            if (golpeP2.getCategoria().equals("fisico")) danoP2 = calcularDanoFisico(segundo, primeiro, golpeP2);
-            else danoP2 = calcularDanoEspecial(segundo, primeiro, golpeP2);
+            while (opcaoGolpe < 1 || opcaoGolpe > 2) opcaoGolpe = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
+            golpeP2 = (opcaoGolpe == 1) ? segundo.getGolpes().getFirst() : segundo.getGolpes().getLast();
+            danoP2 = (golpeP2.getCategoria().equals("fisico")) ? calcularDanoFisico(segundo, primeiro, golpeP2) : calcularDanoEspecial(segundo, primeiro, golpeP2);
             danoP2 += calcularSTAB(segundo, golpeP2, danoP2);
             danoP2 *= calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos());
-            vidaP1 -= (int) danoP2;
-            hpPerdido = (int) danoP2;
-            if (hpPerdido > vidaP1) hpPerdido += vidaP1;
-            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 250);
-            else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 250);
+            hpPerdido = (vidaP1 < (int)danoP2) ? vidaP1 : (int)danoP2;
+            vidaP1 -= (int)danoP2;
+            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 50);
+            else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
             if (vidaP1 <= 0) {
-                if (turno == 1) PrintUtils.slowPrint("O golpe " + golpeP2 + " foi um OH-KO!", 250);
-                else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 250);
-                PrintUtils.slowPrint("---------------------------------------------------", 250);
-                vencedor = segundo;
-                return vencedor;
+                if (turno == 1) PrintUtils.slowPrint("O golpe " + golpeP2 + " foi um OH-KO!", 50);
+                else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                PrintUtils.slowPrint("---------------------------------------------------", 50);
+                return segundo;
             }
         }
     }
@@ -116,12 +102,9 @@ public class BatalhaService {
         return ((d1 * d2) / 50) + 2;
     }
     public Pokemon definirPrimeiro(Pokemon p1, Pokemon p2) {
-        if (p1.getStats().getVelocidade() >= p2.getStats().getVelocidade()) return p1;
-        else return p2;
+        return (p1.getStats().getVelocidade() >= p2.getStats().getVelocidade()) ? p1 : p2;
     }
     public Pokemon definirSegundo(Pokemon p1, Pokemon p2) {
-        Pokemon primeiro = definirPrimeiro(p1, p2);
-        if (primeiro == p1) return p2;
-        else return p1;
+        return (definirPrimeiro(p1, p2) == p1) ? p2 : p1;
     }
 }
