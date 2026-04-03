@@ -9,7 +9,7 @@ import java.util.Scanner;
 import pokedex.exception.*;
 import pokedex.model.*;
 import pokedex.repository.FilePokemonRepository;
-import pokedex.service.PokemonService;
+import pokedex.service.*;
 import pokedex.ui.Menu;
 import pokedex.util.InputUtils;
 
@@ -19,12 +19,19 @@ public class Main {
         System.out.println("Desenvolvido por: Renato Ikeda Bressan");
         Scanner sc = new Scanner(System.in);
         int option = -1;
-        String load = "...\n", caminhoArquivo = "pokedex/data/pokemons.txt", optionArquivo;
-        File arquivo = new File(caminhoArquivo);
+        String load = "...\n", optionArquivo;
         List<Pokemon> pokemons = new ArrayList<>();
-        FilePokemonRepository repo = new FilePokemonRepository(caminhoArquivo);
+        File arquivoPkmn = new File("pokedex/data/pokemons.txt");
+        FilePokemonRepository repo = new FilePokemonRepository("pokedex/data/pokemons.txt");
         PokemonService serv = new PokemonService(repo);
-        if (arquivo.exists() && arquivo.length() > 0) {
+        TypeEffectivenessService efct = new TypeEffectivenessService("pokedex/data/matchups.txt");
+        BatalhaService battle = new BatalhaService(efct);
+        try {
+            efct.extrairDeArquivo();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        if (arquivoPkmn.exists() && arquivoPkmn.length() > 0) {
             optionArquivo = InputUtils.lerString("Deseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
             while (!optionArquivo.toUpperCase().equalsIgnoreCase("s") && !optionArquivo.toUpperCase().equalsIgnoreCase("n")) {
                 optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
@@ -48,11 +55,9 @@ public class Main {
                     String nomePkmn = InputUtils.lerString("Insira o nome do Pokemon: ", sc);
                     String tipo1 = InputUtils.lerString("Insira o tipo principal: ", sc);
                     List<Tipo> tiposPkmn = new ArrayList<>();
-                    boolean tipoValido = false;
                     try {
                         Tipo tipo1Pkmn = Tipo.fromString(tipo1);
                         tiposPkmn.add(tipo1Pkmn);
-                        tipoValido = true;
                         String optionTipo2 = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
                         while (!optionTipo2.toUpperCase().equalsIgnoreCase("s") && !optionTipo2.toUpperCase().equalsIgnoreCase("n")) {
                             optionTipo2 = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
@@ -66,29 +71,19 @@ public class Main {
                                 System.out.println(e.getMessage());
                             }
                         }
-                    } catch (DadoInvalidoException e) {
-                        System.out.println(e.getMessage());
-                    }
-                    int hp = InputUtils.lerInt("Insira o HP base do Pokemon: ", sc);
-                    int atk = InputUtils.lerInt("Insira o ataque base do Pokemon: ", sc);
-                    int def = InputUtils.lerInt("Insira a defesa base do Pokemon: ", sc);
-                    int spAtk = InputUtils.lerInt("Insira o ataque especial base do Pokemon: ", sc);
-                    int spDef = InputUtils.lerInt("Insira a defesa especial base do Pokemon: ", sc);
-                    int speed = InputUtils.lerInt("Insira a velocidade base do Pokemon: ", sc);
-                    try {
+                        int hp = InputUtils.lerInt("Insira o HP base do Pokemon: ", sc);
+                        int atk = InputUtils.lerInt("Insira o ataque base do Pokemon: ", sc);
+                        int def = InputUtils.lerInt("Insira a defesa base do Pokemon: ", sc);
+                        int spAtk = InputUtils.lerInt("Insira o ataque especial base do Pokemon: ", sc);
+                        int spDef = InputUtils.lerInt("Insira a defesa especial base do Pokemon: ", sc);
+                        int speed = InputUtils.lerInt("Insira a velocidade base do Pokemon: ", sc);
                         Stats statsPkmn = new Stats(hp, atk, def, spAtk, spDef, speed);
-                        try {
-                            if (tipoValido) {
-                                Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn);
-                                int id = serv.gerarNovoId();
-                                p.setId(id);
-                                serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn);
-                                pokemons.add(p);
-                                System.out.println("Pokemon " + nomePkmn + " cadastrado com sucesso!");
-                            }
-                        } catch (DadoInvalidoException e) {
-                            System.out.println(e.getMessage());
-                        }
+                        Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn);
+                        int id = serv.gerarNovoId();
+                        p.setId(id);
+                        serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn);
+                        pokemons.add(p);
+                        System.out.println("Pokemon " + nomePkmn + " cadastrado com sucesso!");
                     } catch (DadoInvalidoException e) {
                         System.out.println(e.getMessage());
                     }
@@ -104,7 +99,7 @@ public class Main {
                             System.out.print(" " + t);
                         }
                         System.out.print("\n");
-                        System.out.println("Stats: ");
+                        System.out.println("Stats:");
                         System.out.println("HP: " + pkmn.getBaseStats().getHp());
                         System.out.println("Ataque: " + pkmn.getBaseStats().getAtaque());
                         System.out.println("Defesa: " + pkmn.getBaseStats().getDefesa());
@@ -128,7 +123,7 @@ public class Main {
                             System.out.print(" " + t);
                         }
                         System.out.print("\n");
-                        System.out.println("Stats: ");
+                        System.out.println("Stats:");
                         System.out.println("HP: " + pkmn.getBaseStats().getHp());
                         System.out.println("Ataque: " + pkmn.getBaseStats().getAtaque());
                         System.out.println("Defesa: " + pkmn.getBaseStats().getDefesa());
@@ -159,17 +154,33 @@ public class Main {
                     try {
                         p1 = serv.buscarPorNome(nomeP1);
                         p2 = serv.buscarPorNome(nomeP2);
+                        List<Golpe> golpesP1 = new ArrayList<>();
+                        List<Golpe> golpesP2 = new ArrayList<>();
+                        String golpe1P1 = InputUtils.lerString("Insira um golpe para " + p1.getNome() + ": ", sc);
+                        String golpe2P1 = InputUtils.lerString("Insira outro golpe para " + p1.getNome() + ": ", sc);
                         String nature1 = InputUtils.lerString("Insira a nature de " + p1.getNome() + ": ", sc);
                         int nivelP1 = InputUtils.lerInt("Insira o nivel de " + p1.getNome() + ": ", sc);
                         sc.nextLine();
+                        String golpe1P2 = InputUtils.lerString("Insira um golpe para " + p2.getNome() + ": ", sc);
+                        String golpe2P2 = InputUtils.lerString("Insira outro golpe para " + p2.getNome() + ": ", sc);
                         String nature2 = InputUtils.lerString("Insira a nature de " + p2.getNome() + ": ", sc);
                         int nivelP2 = InputUtils.lerInt("Insira o nivel de " + p2.getNome() + ": ", sc);
                         try {
+                            Golpe golpeP1n1 = Golpe.fromString(golpe1P1);
+                            golpesP1.add(golpeP1n1);
+                            Golpe golpeP1n2 = Golpe.fromString(golpe2P1);
+                            golpesP1.add(golpeP1n2);
                             Nature natureP1 = Nature.fromString(nature1);
+                            p1.setGolpes(golpesP1);
                             p1.setNature(natureP1);
                             p1.setNivel(nivelP1);
                             p1.setStats(p1.getBaseStats(), p1.getNature(), p1.getNivel());
+                            Golpe golpeP2n1 = Golpe.fromString(golpe1P2);
+                            golpesP2.add(golpeP2n1);
+                            Golpe golpeP2n2 = Golpe.fromString(golpe2P2);
+                            golpesP2.add(golpeP2n2);
                             Nature natureP2 = Nature.fromString(nature2);
+                            p2.setGolpes(golpesP2);
                             p2.setNature(natureP2);
                             p2.setNivel(nivelP2);
                             p2.setStats(p2.getBaseStats(), p2.getNature(), p2.getNivel());
@@ -179,8 +190,15 @@ public class Main {
                             for (Tipo t : p1.getTipos()) {
                                 System.out.print(" " + t);
                             }
+                            System.out.print("\n");
+                            System.out.print("Golpes:");
+                            for (Golpe g : p1.getGolpes()) {
+                                System.out.print(" " + g);
+                            }
+                            System.out.print("\n");
                             System.out.println("Nature: " + p1.getNature());
                             System.out.println("Nivel: " + p1.getNivel());
+                            System.out.println("Stats:");
                             System.out.println("HP: " + p1.getStats().getHp());
                             System.out.println("Ataque: " + p1.getStats().getAtaque());
                             System.out.println("Defesa: " + p1.getStats().getDefesa());
@@ -193,8 +211,15 @@ public class Main {
                             for (Tipo t : p2.getTipos()) {
                                 System.out.print(" " + t);
                             }
+                            System.out.print("\n");
+                            System.out.print("Golpes:");
+                            for (Golpe g : p2.getGolpes()) {
+                                System.out.print(" " + g);
+                            }
+                            System.out.print("\n");
                             System.out.println("Nature: " + p2.getNature());
                             System.out.println("Nivel: " + p2.getNivel());
+                            System.out.println("Stats:");
                             System.out.println("HP: " + p2.getStats().getHp());
                             System.out.println("Ataque: " + p2.getStats().getAtaque());
                             System.out.println("Defesa: " + p2.getStats().getDefesa());
@@ -202,6 +227,7 @@ public class Main {
                             System.out.println("Defesa especial: " + p2.getStats().getDefesaEspecial());
                             System.out.println("Velocidade: " + p2.getStats().getVelocidade());
                             System.out.println("---------------------------------------------------");
+                            battle.batalhar(p1, p2, sc);
                         } catch (DadoInvalidoException e) {
                             System.out.println(e.getMessage());
                             break;
@@ -212,7 +238,7 @@ public class Main {
                     }
                     break;
                 case 6:
-                    if (arquivo.exists()) {
+                    if (arquivoPkmn.exists()) {
                         try {
                             repo.limparArquivo();
                             System.out.println("Arquivo limpo com sucesso!");

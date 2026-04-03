@@ -14,6 +14,7 @@ public class Pokemon {
     private Stats stats;
     private Nature nature;
     private int nivel;
+    private List<Golpe> golpes;
     public Pokemon(String nome, List<Tipo> tipos, Stats baseStats) throws DadoInvalidoException {
         this.nome = nome;
         if (tipos == null || tipos.isEmpty()) throw new DadoInvalidoException("Pokemon deve ter pelo menos 1 tipo!");
@@ -21,8 +22,6 @@ public class Pokemon {
         if (new HashSet<>(tipos).size() != tipos.size()) throw new DadoInvalidoException("Tipos duplicados nao sao permitidos!");
         this.tipos = tipos;
         this.baseStats = baseStats;
-        this.nature = Nature.HARDY;
-        this.nivel = 1;
     }
     public String getNome() {
         return nome;
@@ -80,6 +79,15 @@ public class Pokemon {
     public void setNivel(int nivel) throws DadoInvalidoException {
         if (nivel < 1 || nivel > 100) throw new DadoInvalidoException("Pokemon deve ser de nivel 1 a 100!");
         this.nivel = nivel;
+    }
+    public  List<Golpe> getGolpes() {
+        return golpes;
+    }
+    public void setGolpes(List<Golpe> golpes) throws DadoInvalidoException {
+        if (golpes == null || golpes.isEmpty()) throw new DadoInvalidoException("Pokemon deve ter pelo menos 1 golpe!");
+        if (golpes.size() > 2) throw new DadoInvalidoException("Pokemon nao pode ter mais de 4 golpes!");
+        if (new HashSet<>(golpes).size() != golpes.size()) throw new DadoInvalidoException("Golpes duplicados nao sao permitidos!");
+        this.golpes = golpes;
     }
     public int getId() {
         return id;
