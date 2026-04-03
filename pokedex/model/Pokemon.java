@@ -106,6 +106,15 @@ public class Pokemon {
         if (new HashSet<>(golpes).size() != golpes.size()) throw new DadoInvalidoException("Golpes duplicados nao sao permitidos!");
         this.golpes = golpes;
     }
+    public int calcularBST() {
+        int hpBase = baseStats.getHp();
+        int atkBase = baseStats.getAtaque();
+        int defBase = baseStats.getDefesa();
+        int spAtkBase = baseStats.getAtaqueEspecial();
+        int spDefBase = baseStats.getDefesaEspecial();
+        int speedBase = baseStats.getVelocidade();
+        return hpBase + atkBase + defBase + spAtkBase + spDefBase + speedBase;
+    }
     public String toFileString() {
         StringBuilder tipoString = new StringBuilder();
         for (Tipo tipo : tipos) {
@@ -115,9 +124,5 @@ public class Pokemon {
         if (tipoString.length() > 0) tipoString.setLength(tipoString.length() - 1);
         String statString = baseStats.getHp() + "," +  baseStats.getAtaque() + "," + baseStats.getDefesa() + "," + baseStats.getAtaqueEspecial() + "," + baseStats.getDefesaEspecial() + "," + baseStats.getVelocidade();
         return id + ";" + nome + ";" + tipoString + ";" + statString;
-    }
-    public boolean temTipo(Tipo tipo) {
-        if (tipo == null) return false;
-        return tipos.contains(tipo);
     }
 }
