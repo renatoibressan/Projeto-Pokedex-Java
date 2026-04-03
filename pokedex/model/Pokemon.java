@@ -60,12 +60,12 @@ public class Pokemon {
         int spAtkBase = baseStats.getAtaqueEspecial();
         int spDefBase = baseStats.getDefesaEspecial();
         int speedBase = baseStats.getVelocidade();
-        int hp = (int) Math.floor(((hpBase * 2) * nivel) / 100) + nivel + 10;
-        int atk = (int) Math.floor(((atkBase * 2) * nivel) / 100) + 5;
-        int def = (int) Math.floor(((defBase * 2) * nivel) / 100) + 5;
-        int spAtk = (int) Math.floor(((spAtkBase * 2) * nivel) / 100) + 5;
-        int spDef = (int) Math.floor(((spDefBase * 2) * nivel) / 100) + 5;
-        int speed = (int) Math.floor(((speedBase * 2) * nivel) / 100) + 5;
+        int hp = (int) Math.floor((((hpBase * 2) + 31) * nivel) / 100) + nivel + 10;
+        int atk = (int) Math.floor((((atkBase * 2) + 31) * nivel) / 100) + 5;
+        int def = (int) Math.floor((((defBase * 2) + 31) * nivel) / 100) + 5;
+        int spAtk = (int) Math.floor((((spAtkBase * 2) + 31) * nivel) / 100) + 5;
+        int spDef = (int) Math.floor((((spDefBase * 2) + 31) * nivel) / 100) + 5;
+        int speed = (int) Math.floor((((speedBase * 2) + 31) * nivel) / 100) + 5;
         switch (nature) {
             case HARDY: case DOCILE: case SERIOUS: case BASHFUL: case QUIRKY: break;
             case LONELY: case ADAMANT: case NAUGHTY: case BRAVE: atk += atk / 10; break;

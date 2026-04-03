@@ -53,7 +53,11 @@ public class Main {
             switch (option) {
                 case 1:
                     sc.nextLine();
-                    String nomePkmn = InputUtils.lerString("Insira o nome do Pokemon: ", sc);
+                    String nome = InputUtils.lerString("Insira o nome do Pokemon: ", sc);
+                    while (nome == null || nome.isEmpty()) {
+                        nome = InputUtils.lerString("Entrada invalida!\nInsira o nome do Pokemon: ", sc);
+                    }
+                    String nomePkmn = nome.substring(0, 1).toUpperCase() + nome.substring(1);
                     String tipo1 = InputUtils.lerString("Insira o tipo principal: ", sc);
                     List<Tipo> tiposPkmn = new ArrayList<>();
                     try {
@@ -199,6 +203,8 @@ public class Main {
                     sc.nextLine();
                     String nomeRemocao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
                     try {
+                        Pokemon pkmn = serv.buscarPorNome(nomeRemocao);
+                        pokemons.remove(pkmn);
                         serv.removerPokemon(nomeRemocao);
                         PrintUtils.slowPrint("Pokemon " + nomeRemocao + " removido com sucesso!", 75);
                     } catch (PokemonNaoEncontradoException e) {
