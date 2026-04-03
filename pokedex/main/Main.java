@@ -134,6 +134,65 @@ public class Main {
                     break;
                 case 4:
                     sc.nextLine();
+                    String nomeEdicao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    try {
+                        Pokemon pkmn = serv.buscarPorNome(nomeEdicao);
+                        System.out.println("1. Editar nome");
+                        System.out.println("2. Editar tipagem");
+                        System.out.println("3. Editar stats");
+                        int edicao = InputUtils.lerInt("Insira a opcao de edicao desejada: ", sc);
+                        while (edicao < 1 || edicao > 2) edicao = InputUtils.lerInt("Opcao invalida!\nInsira a opcao de edicao desejada: ", sc);
+                        switch (edicao) {
+                            case 1:
+                                sc.nextLine();
+                                String novoNome = InputUtils.lerString("Insira o novo nome do Pokemon: ", sc);
+                                pkmn.setNome(novoNome);
+                                System.out.println("Nome alterado com sucesso!");
+                                break;
+                            case 2:
+                                sc.nextLine();
+                                String novoTipo1 = InputUtils.lerString("Insira o novo tipo principal do Pokemon: ", sc);
+                                List<Tipo> novosTiposPkmn = new ArrayList<>();
+                                try {
+                                    Tipo novoTipoPkmn1 = Tipo.fromString(novoTipo1);
+                                    novosTiposPkmn.add(novoTipoPkmn1);
+                                    String optionTipo2 = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
+                                    while (!optionTipo2.toUpperCase().equalsIgnoreCase("s") && !optionTipo2.toUpperCase().equalsIgnoreCase("n")) {
+                                        optionTipo2 = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
+                                    }
+                                    if (optionTipo2.equalsIgnoreCase("s")) {
+                                        String novoTipo2 = InputUtils.lerString("Insira o novo tipo secundario do Pokemon: ", sc);
+                                        Tipo novoTipoPkmn2 = Tipo.fromString(novoTipo2);
+                                        novosTiposPkmn.add(novoTipoPkmn2);
+                                    }
+                                    pkmn.setTipos(novosTiposPkmn);
+                                    System.out.println("Tipos alterados com sucesso!");
+                                } catch (DadoInvalidoException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                                break;
+                            case 3:
+                                int novoHp = InputUtils.lerInt("Insira o novo HP base: ", sc);
+                                int novoAtaque = InputUtils.lerInt("Insira o novo ataque base: ", sc);
+                                int novaDefesa = InputUtils.lerInt("Insira a nova defesa base: ", sc);
+                                int novoAtaqueEspecial = InputUtils.lerInt("Insira o novo ataque especial base: ", sc);
+                                int novaDefesaEspecial = InputUtils.lerInt("Insira a nova defesa especial base: ", sc);
+                                int novaVelocidade = InputUtils.lerInt("Insira a nova velocidade base: ", sc);
+                                try {
+                                    Stats novosBaseStats = new Stats(novoHp, novoAtaque, novaDefesa, novoAtaqueEspecial, novaDefesaEspecial, novaVelocidade);
+                                    pkmn.setBaseStats(novosBaseStats);
+                                    System.out.println("Stats base alterados com sucesso!");
+                                } catch (DadoInvalidoException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                                break;
+                        }
+                    } catch (PokemonNaoEncontradoException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                case 5:
+                    sc.nextLine();
                     String nomeRemocao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
                     try {
                         serv.removerPokemon(nomeRemocao);
@@ -142,7 +201,7 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                     break;
-                case 5:
+                case 6:
                     Pokemon p1 = null, p2 = null;
                     sc.nextLine();
                     String nomeP1 = InputUtils.lerString("Insira um nome para procura de um Pokemon: ", sc);
@@ -191,7 +250,7 @@ public class Main {
                         break;
                     }
                     break;
-                case 6:
+                case 7:
                     if (arquivoPkmn.exists()) {
                         try {
                             repo.limparArquivo();

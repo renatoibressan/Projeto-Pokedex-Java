@@ -23,14 +23,32 @@ public class Pokemon {
         this.tipos = tipos;
         this.baseStats = baseStats;
     }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getNome() {
         return nome;
+    }
+    public void setNome(String nome) {
+        this.nome = nome;
     }
     public List<Tipo> getTipos() {
         return Collections.unmodifiableList(tipos);
     }
+    public void setTipos(List<Tipo> tipos) throws DadoInvalidoException {
+        if (tipos == null || tipos.isEmpty()) throw new DadoInvalidoException("Pokemon deve ter pelo menos 1 tipo!");
+        if (tipos.size() > 2) throw new DadoInvalidoException("Pokemon nao pode ter mais de 2 tipos!");
+        if (new HashSet<>(tipos).size() != tipos.size()) throw new DadoInvalidoException("Tipos duplicados nao sao permitidos!");
+        this.tipos = tipos;
+    }
     public Stats getBaseStats() {
         return baseStats;
+    }
+    public void setBaseStats(Stats baseStats) {
+        this.baseStats = baseStats;
     }
     public Stats getStats() {
         return stats;
@@ -48,7 +66,6 @@ public class Pokemon {
         int spAtk = (int) Math.floor(((spAtkBase * 2) * nivel) / 100) + 5;
         int spDef = (int) Math.floor(((spDefBase * 2) * nivel) / 100) + 5;
         int speed = (int) Math.floor(((speedBase * 2) * nivel) / 100) + 5;
-        this.stats = new Stats(hp, atk, def, spAtk, spDef, speed);
         switch (nature) {
             case HARDY: case DOCILE: case SERIOUS: case BASHFUL: case QUIRKY: break;
             case LONELY: case ADAMANT: case NAUGHTY: case BRAVE: atk += atk / 10; break;
@@ -65,12 +82,7 @@ public class Pokemon {
             case NAUGHTY: case LAX: case RASH: case NAIVE: spDef -= spDef / 10; break;
             case BRAVE: case RELAXED: case QUIET: case SASSY: speed -= speed / 10; break;
         }
-        stats.setHp(hp);
-        stats.setAtaque(atk);
-        stats.setDefesa(def);
-        stats.setAtaqueEspecial(spAtk);
-        stats.setDefesaEspecial(spDef);
-        stats.setVelocidade(speed);
+        this.stats = new Stats(hp, atk, def, spAtk, spDef, speed);
     }
     public Nature getNature() {
         return nature;
@@ -90,15 +102,9 @@ public class Pokemon {
     }
     public void setGolpes(List<Golpe> golpes) throws DadoInvalidoException {
         if (golpes == null || golpes.isEmpty()) throw new DadoInvalidoException("Pokemon deve ter pelo menos 1 golpe!");
-        if (golpes.size() > 2) throw new DadoInvalidoException("Pokemon nao pode ter mais de 4 golpes!");
+        if (golpes.size() > 4) throw new DadoInvalidoException("Pokemon nao pode ter mais de 4 golpes!");
         if (new HashSet<>(golpes).size() != golpes.size()) throw new DadoInvalidoException("Golpes duplicados nao sao permitidos!");
         this.golpes = golpes;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
     }
     public String toFileString() {
         StringBuilder tipoString = new StringBuilder();
