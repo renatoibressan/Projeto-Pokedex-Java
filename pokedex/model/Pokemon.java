@@ -36,14 +36,19 @@ public class Pokemon {
         return stats;
     }
     public void setStats(Stats baseStats, Nature nature, int nivel) throws DadoInvalidoException {
-        this.stats = new Stats(baseStats.getHp(), baseStats.getAtaque(), baseStats.getDefesa(), baseStats.getAtaqueEspecial(), baseStats.getDefesaEspecial(), baseStats.getVelocidade());
-        int hp, atk, def, spAtk, spDef, speed;
-        hp = (int) Math.floor(((baseStats.getHp() * 2) * nivel) / 100) + nivel + 10;
-        atk = (int) Math.floor(((baseStats.getAtaque() * 2) * nivel) / 100) + 5;
-        def = (int) Math.floor(((baseStats.getDefesa() * 2) * nivel) / 100) + 5;
-        spAtk = (int) Math.floor(((baseStats.getAtaqueEspecial() * 2) * nivel) / 100) + 5;
-        spDef = (int) Math.floor(((baseStats.getDefesaEspecial() * 2) * nivel) / 100) + 5;
-        speed = (int) Math.floor(((baseStats.getVelocidade() * 2) * nivel) / 100) + 5;
+        int hpBase = baseStats.getHp();
+        int atkBase = baseStats.getAtaque();
+        int defBase = baseStats.getDefesa();
+        int spAtkBase = baseStats.getAtaqueEspecial();
+        int spDefBase = baseStats.getDefesaEspecial();
+        int speedBase = baseStats.getVelocidade();
+        int hp = (int) Math.floor(((hpBase * 2) * nivel) / 100) + nivel + 10;
+        int atk = (int) Math.floor(((atkBase * 2) * nivel) / 100) + 5;
+        int def = (int) Math.floor(((defBase * 2) * nivel) / 100) + 5;
+        int spAtk = (int) Math.floor(((spAtkBase * 2) * nivel) / 100) + 5;
+        int spDef = (int) Math.floor(((spDefBase * 2) * nivel) / 100) + 5;
+        int speed = (int) Math.floor(((speedBase * 2) * nivel) / 100) + 5;
+        this.stats = new Stats(hp, atk, def, spAtk, spDef, speed);
         switch (nature) {
             case HARDY: case DOCILE: case SERIOUS: case BASHFUL: case QUIRKY: break;
             case LONELY: case ADAMANT: case NAUGHTY: case BRAVE: atk += atk / 10; break;

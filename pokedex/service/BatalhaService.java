@@ -11,9 +11,8 @@ public class BatalhaService {
     public BatalhaService(TypeEffectivenessService effect) {
         this.effect = effect;
     }
-    public void batalhar(Pokemon p1, Pokemon p2, Scanner sc) {
-        boolean fainted = false;
-        int turno = 0, i, opcaoGolpe1, opcaoGolpe2;
+    public Pokemon batalhar(Pokemon p1, Pokemon p2, Scanner sc) {
+        int turno = 0, i, opcaoGolpe, hpPerdido = 0;
         double danoP1, danoP2;
         Golpe golpeP1, golpeP2;
         Pokemon primeiro = definirPrimeiro(p1, p2);
@@ -23,59 +22,71 @@ public class BatalhaService {
         int vidaP2 = segundo.getStats().getHp();
         System.out.println("---------------------------------------------------");
         System.out.println("Batalha entre " + primeiro.getNome() + " e " + segundo.getNome() + " iniciada!");
-        while (!fainted) {
+        while (true) {
             turno++;
-            System.out.println(primeiro.getNome() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
-            System.out.println(segundo.getNome() + ": " + vidaP2 + " / " + segundo.getStats().getHp());
+            System.out.print("\n");
+            System.out.println(primeiro.getNome() + " Lv." + primeiro.getNivel() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
+            System.out.println(segundo.getNome() + " Lv." + segundo.getNivel() + ": " + vidaP2 + " / " + segundo.getStats().getHp());
+            System.out.print("\n");
+            System.out.println("Golpes de " + primeiro.getNome() + ":");
             i = 1;
             for (Golpe g : primeiro.getGolpes()) {
                 System.out.println(i + ". " + g);
                 i++;
             }
-            opcaoGolpe1 = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
-            while (opcaoGolpe1 != 1 && opcaoGolpe1 != 2) {
-                opcaoGolpe1 = InputUtils.lerInt("Opcao invalida!\nInsira uma das opcoes acima: ", sc);
+            opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
+            while (opcaoGolpe < 1 || opcaoGolpe > 2) {
+                opcaoGolpe = InputUtils.lerInt("Opcao invalida!\nInsira uma das opcoes acima: ", sc);
             }
-            if (opcaoGolpe1 == 1) golpeP1 = primeiro.getGolpes().getFirst();
+            if (opcaoGolpe == 1) golpeP1 = primeiro.getGolpes().getFirst();
             else golpeP1 = primeiro.getGolpes().getLast();
             if (golpeP1.getCategoria().equals("fisico")) danoP1 = calcularDanoFisico(primeiro, segundo, golpeP1);
             else danoP1 = calcularDanoEspecial(primeiro, segundo, golpeP1);
             danoP1 += calcularSTAB(primeiro, golpeP1, danoP1);
             danoP1 *= calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos());
             vidaP2 -= (int) danoP1;
+            hpPerdido = (int) danoP1;
+            if (hpPerdido > vidaP2) hpPerdido += vidaP2;
+            if (hpPerdido == 0) System.out.println("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!");
+            else System.out.println("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!");
             if (vidaP2 <= 0) {
-                System.out.println("O Pokemon " + segundo.getNome() + " desmaiou!");
+                System.out.println("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!");
+                System.out.println("---------------------------------------------------");
                 vencedor = primeiro;
-                System.out.println("O Pokemon vencedor foi " + vencedor.getNome() + "!");
-                fainted = true;
+                return vencedor;
             }
-            System.out.println(primeiro.getNome() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
-            System.out.println(segundo.getNome() + ": " + vidaP2 + " / " + segundo.getStats().getHp());
+            System.out.print("\n");
+            System.out.println(primeiro.getNome() + " Lv." + primeiro.getNivel() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
+            System.out.println(segundo.getNome() + " Lv." + segundo.getNivel() + ": " + vidaP2 + " / " + segundo.getStats().getHp());
+            System.out.print("\n");
+            System.out.println("Golpes de " + segundo.getNome() + ":");
             i = 1;
             for (Golpe g : segundo.getGolpes()) {
                 System.out.println(i + ". " + g);
                 i++;
             }
-            opcaoGolpe2 = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
-            while (opcaoGolpe2 != 1 && opcaoGolpe2 != 2) {
-                opcaoGolpe2 = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
+            opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
+            while (opcaoGolpe < 1 || opcaoGolpe > 2) {
+                opcaoGolpe = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
             }
-            if (opcaoGolpe2 == 1) golpeP2 = segundo.getGolpes().getFirst();
+            if (opcaoGolpe == 1) golpeP2 = segundo.getGolpes().getFirst();
             else golpeP2 = segundo.getGolpes().getLast();
             if (golpeP2.getCategoria().equals("fisico")) danoP2 = calcularDanoFisico(segundo, primeiro, golpeP2);
             else danoP2 = calcularDanoEspecial(segundo, primeiro, golpeP2);
             danoP2 += calcularSTAB(segundo, golpeP2, danoP2);
             danoP2 *= calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos());
             vidaP1 -= (int) danoP2;
+            hpPerdido = (int) danoP2;
+            if (hpPerdido > vidaP1) hpPerdido += vidaP1;
+            if (hpPerdido == 0) System.out.println("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!");
+            else System.out.println("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!");
             if (vidaP1 <= 0) {
-                System.out.println("O Pokemon " + primeiro.getNome() + " desmaiou!");
+                System.out.println("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turno(s)!");
+                System.out.println("---------------------------------------------------");
                 vencedor = segundo;
-                System.out.println("O Pokemon vencedor foi " + vencedor.getNome() + "!");
-                fainted = true;
+                return vencedor;
             }
         }
-        System.out.println("Turnos executados: " + turno);
-        System.out.println("---------------------------------------------------");
     }
     public double calcularEficaciaDeTipo(Tipo atacante, List<Tipo> defensor) {
         double multiplicador = 1.0;

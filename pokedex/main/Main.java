@@ -29,7 +29,7 @@ public class Main {
         try {
             efct.extrairDeArquivo();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Nao foi possivel carregar o arquivo!");
         }
         if (arquivoPkmn.exists() && arquivoPkmn.length() > 0) {
             optionArquivo = InputUtils.lerString("Deseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
@@ -64,12 +64,8 @@ public class Main {
                         }
                         if (optionTipo2.equalsIgnoreCase("s")) {
                             String tipo2 = InputUtils.lerString("Insira o tipo secundario: ", sc);
-                            try {
-                                Tipo tipo2Pkmn = Tipo.fromString(tipo2);
-                                tiposPkmn.add(tipo2Pkmn);
-                            } catch (DadoInvalidoException e) {
-                                System.out.println(e.getMessage());
-                            }
+                            Tipo tipo2Pkmn = Tipo.fromString(tipo2);
+                            tiposPkmn.add(tipo2Pkmn);
                         }
                         int hp = InputUtils.lerInt("Insira o HP base do Pokemon: ", sc);
                         int atk = InputUtils.lerInt("Insira o ataque base do Pokemon: ", sc);
@@ -83,9 +79,9 @@ public class Main {
                         p.setId(id);
                         serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn);
                         pokemons.add(p);
-                        System.out.println("Pokemon " + nomePkmn + " cadastrado com sucesso!");
+                        System.out.println("Pokemon " + p.getNome() + " cadastrado com sucesso!");
                     } catch (DadoInvalidoException e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("Nao foi possivel cadastrar o Pokemon: " + e.getMessage());
                     }
                     break;
                 case 2:
@@ -184,56 +180,14 @@ public class Main {
                             p2.setNature(natureP2);
                             p2.setNivel(nivelP2);
                             p2.setStats(p2.getBaseStats(), p2.getNature(), p2.getNivel());
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("Dados de " + p1.getNome() + ":");
-                            System.out.print("Tipos:");
-                            for (Tipo t : p1.getTipos()) {
-                                System.out.print(" " + t);
-                            }
-                            System.out.print("\n");
-                            System.out.print("Golpes:");
-                            for (Golpe g : p1.getGolpes()) {
-                                System.out.print(" " + g);
-                            }
-                            System.out.print("\n");
-                            System.out.println("Nature: " + p1.getNature());
-                            System.out.println("Nivel: " + p1.getNivel());
-                            System.out.println("Stats:");
-                            System.out.println("HP: " + p1.getStats().getHp());
-                            System.out.println("Ataque: " + p1.getStats().getAtaque());
-                            System.out.println("Defesa: " + p1.getStats().getDefesa());
-                            System.out.println("Ataque especial: " + p1.getStats().getAtaqueEspecial());
-                            System.out.println("Defesa especial: " + p1.getStats().getDefesaEspecial());
-                            System.out.println("Velocidade: " + p1.getStats().getVelocidade());
-                            System.out.println("---------------------------------------------------");
-                            System.out.println("Dados de " + p2.getNome() + ":");
-                            System.out.print("Tipos:");
-                            for (Tipo t : p2.getTipos()) {
-                                System.out.print(" " + t);
-                            }
-                            System.out.print("\n");
-                            System.out.print("Golpes:");
-                            for (Golpe g : p2.getGolpes()) {
-                                System.out.print(" " + g);
-                            }
-                            System.out.print("\n");
-                            System.out.println("Nature: " + p2.getNature());
-                            System.out.println("Nivel: " + p2.getNivel());
-                            System.out.println("Stats:");
-                            System.out.println("HP: " + p2.getStats().getHp());
-                            System.out.println("Ataque: " + p2.getStats().getAtaque());
-                            System.out.println("Defesa: " + p2.getStats().getDefesa());
-                            System.out.println("Ataque especial: " + p2.getStats().getAtaqueEspecial());
-                            System.out.println("Defesa especial: " + p2.getStats().getDefesaEspecial());
-                            System.out.println("Velocidade: " + p2.getStats().getVelocidade());
-                            System.out.println("---------------------------------------------------");
-                            battle.batalhar(p1, p2, sc);
+                            Pokemon vencedor = battle.batalhar(p1, p2, sc);
+                            System.out.println("O Pokemon vencedor foi " + vencedor.getNome() + "!");
                         } catch (DadoInvalidoException e) {
-                            System.out.println(e.getMessage());
+                            System.out.println("Nao foi possivel executar a batalha: " + e.getMessage());
                             break;
                         }
                     } catch (PokemonNaoEncontradoException e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("Nao foi possivel executar a batalha: " + e.getMessage());
                         break;
                     }
                     break;
