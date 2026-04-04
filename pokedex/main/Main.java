@@ -16,8 +16,8 @@ import pokedex.util.PrintUtils;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        PrintUtils.slowPrint("============= POKEDEX MODULAR =============", 75);
-        PrintUtils.slowPrint("Desenvolvido por: Renato Ikeda Bressan", 75);
+        PrintUtils.slowPrint("=============== POKEDEX MODULAR ===============", 40);
+        PrintUtils.slowPrint("Desenvolvido por: Renato Ikeda Bressan", 40);
         Scanner sc = new Scanner(System.in);
         int option = -1;
         String optionArquivo;
@@ -40,15 +40,16 @@ public class Main {
             if (optionArquivo.equalsIgnoreCase("s")) {
                 try {
                     pokemons = repo.lerArquivo();
+                    serv.putPokemons(pokemons);
                     repo.inserirPokemons(pokemons);
-                    PrintUtils.slowPrint("Pokemons carregados com sucesso!", 75);
+                    PrintUtils.slowPrint(repo.contarPokemons() + " Pokemons foram carregados com sucesso!", 50);
                 } catch (IOException e) {
                     System.out.println("Nao foi possivel ler o arquivo!");
                 }
             }
         }
         do {
-            Menu.exibirMenu();
+            Menu.exibirMenuPrincipal(20);
             option = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
             switch (option) {
                 case 1:
@@ -59,24 +60,56 @@ public class Main {
                     }
                     String nomePkmn = nome.substring(0, 1).toUpperCase() + nome.substring(1);
                     List<Tipo> tiposPkmn = new ArrayList<>();
-                    String optionTipoAnterior = "n";
-                    Pokemon anterior = (!pokemons.isEmpty()) ? pokemons.getLast() : null;
-                    boolean tipoValido = true;
-                    if (!pokemons.isEmpty()) optionTipoAnterior = InputUtils.lerString("Deseja utilizar o(s) tipo(s) de " + anterior.getNome() + "? (S/N): ", sc);
-                    while (!optionTipoAnterior.equalsIgnoreCase("s") && !optionTipoAnterior.equalsIgnoreCase("n")) {
-                        optionTipoAnterior = InputUtils.lerString("Opcao invalida!\nDeseja utilizar o(s) tipo(s) de " + anterior.getNome() + "? (S/N): ", sc);
-                    }
-                    if (optionTipoAnterior.equalsIgnoreCase("s")) {
-                        Tipo tipoAnterior1 = anterior.getTipos().getFirst();
-                        tiposPkmn.add(tipoAnterior1);
-                        tipoValido = true;
-                        if (anterior.getTipos().size() > 1) {
-                            String optionTipoAnterior2 = InputUtils.lerString("Deseja utilizar o tipo secundario de " + anterior.getNome() + "? (S/N): ", sc);
+                    boolean tipoValido = false;
+                    if (!pokemons.isEmpty()) {
+                        Pokemon anterior = pokemons.getLast();
+                        String txt1 = "Deseja utilizar o tipo " + anterior.getTipos().getFirst() + " do Pokemon " + anterior.getNome() + "? (S/N): ";
+                        String optionTipoAnterior1 = InputUtils.lerString(txt1, sc);
+                        while (!optionTipoAnterior1.equalsIgnoreCase("s") && !optionTipoAnterior1.equalsIgnoreCase("n")) {
+                            optionTipoAnterior1 = InputUtils.lerString("Opcao invalida!\n" + txt1, sc);
+                        }
+                        if (optionTipoAnterior1.equalsIgnoreCase("s")) {
+                            Tipo tipoAnterior1 = anterior.getTipos().getFirst();
+                            tiposPkmn.add(tipoAnterior1);
+                            tipoValido = true;
+                        } else {
+                            String tipo1 = InputUtils.lerString("Insira o tipo principal desejado: ", sc);
+                            try {
+                                Tipo tipo1Pkmn = Tipo.fromString(tipo1);
+                                tiposPkmn.add(tipo1Pkmn);
+                                tipoValido = true;
+                            } catch (DadoInvalidoException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                        if (anterior.getTipos().size() == 2 && !tiposPkmn.contains(anterior.getTipos().getLast())) {
+                            String txt2 = "Deseja utilizar o tipo " + anterior.getTipos().getLast() + " do Pokemon " + anterior.getNome() + "? (S/N): ";
+                            String optionTipoAnterior2 = InputUtils.lerString(txt2, sc);
                             while (!optionTipoAnterior2.equalsIgnoreCase("s") && !optionTipoAnterior2.equalsIgnoreCase("n")) {
-                                optionTipoAnterior2 = InputUtils.lerString("Opcao invalida!\nDeseja utilizar o tipo secundario de " + anterior.getNome() + "? (S/N): ", sc);
+                                optionTipoAnterior2 = InputUtils.lerString("Opcao invalida!\n" + txt2, sc);
                             }
                             if (optionTipoAnterior2.equalsIgnoreCase("s")) tiposPkmn.add(anterior.getTipos().getLast());
                             else {
+                                String optionTipoSec = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
+                                    while (!optionTipoSec.equalsIgnoreCase("s") && !optionTipoSec.equalsIgnoreCase("n")) {
+                                    optionTipoSec = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
+                                }
+                                if (optionTipoSec.equalsIgnoreCase("s")) {
+                                    String tipo2 = InputUtils.lerString("Insira o tipo secundario desejado: ", sc);
+                                    try {
+                                        Tipo tipo2Pkmn = Tipo.fromString(tipo2);
+                                        tiposPkmn.add(tipo2Pkmn);
+                                    } catch (DadoInvalidoException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                }
+                            }
+                        } else {
+                            String optionTipoSec = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
+                            while (!optionTipoSec.equalsIgnoreCase("s") && !optionTipoSec.equalsIgnoreCase("n")) {
+                                optionTipoSec = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
+                            }
+                            if (optionTipoSec.equalsIgnoreCase("s")) {
                                 String tipo2 = InputUtils.lerString("Insira o tipo secundario desejado: ", sc);
                                 try {
                                     Tipo tipo2Pkmn = Tipo.fromString(tipo2);
@@ -85,23 +118,9 @@ public class Main {
                                     System.out.println(e.getMessage());
                                 }
                             }
-                        } else {
-                            String optionTipoSec = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
-                            while (!optionTipoSec.equalsIgnoreCase("s") && !optionTipoSec.equalsIgnoreCase("n")) {
-                                optionTipoSec = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
-                            }
-                            try {
-                                if (optionTipoSec.equalsIgnoreCase("s")) {
-                                    String tipo2 = InputUtils.lerString("Insira o tipo secundario: ", sc);
-                                    Tipo tipo2Pkmn = Tipo.fromString(tipo2);
-                                    tiposPkmn.add(tipo2Pkmn);
-                                }
-                            } catch (DadoInvalidoException e) {
-                                System.out.println(e.getMessage());
-                            }
                         }
                     } else {
-                        String tipo1 = InputUtils.lerString("Insira o tipo principal: ", sc);
+                        String tipo1 = InputUtils.lerString("Insira o tipo principal desejado: ", sc);
                         String optionTipoSec = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
                         while (!optionTipoSec.equalsIgnoreCase("s") && !optionTipoSec.equalsIgnoreCase("n")) {
                             optionTipoSec = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
@@ -109,12 +128,12 @@ public class Main {
                         try {
                             Tipo tipo1Pkmn = Tipo.fromString(tipo1);
                             tiposPkmn.add(tipo1Pkmn);
+                            tipoValido = true;
                             if (optionTipoSec.equalsIgnoreCase("s")) {
-                                String tipo2 = InputUtils.lerString("Insira o tipo secundario: ", sc);
+                                String tipo2 = InputUtils.lerString("Insira o tipo secundario desejado: ", sc);
                                 Tipo tipo2Pkmn = Tipo.fromString(tipo2);
                                 tiposPkmn.add(tipo2Pkmn);
                             }
-                            tipoValido = true;
                         } catch (DadoInvalidoException e) {
                             System.out.println("Nao foi possivel cadastrar o Pokemon: " + e.getMessage());
                         }
@@ -132,8 +151,7 @@ public class Main {
                             Pokemon p = new Pokemon(nomePkmn, tiposPkmn, statsPkmn);
                             int id = serv.gerarNovoId();
                             p.setId(id);
-                            serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn);
-                            pokemons.add(p);
+                            serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn, id);
                             PrintUtils.slowPrint("Pokemon " + p.getNome() + " cadastrado com sucesso!", 75);
                             System.out.println("Numero de Pokedex: #" + String.format("%04d", p.getId()));
                             System.out.print("Tipo(s):");
@@ -148,48 +166,21 @@ public class Main {
                     break;
                 case 2:
                     List<Pokemon> listaPkmn = serv.listarPokemons();
-                    PrintUtils.slowPrint("---------------------------------------------------", 10);
-                    for (Pokemon pkmn : listaPkmn) {
-                        System.out.println("Nome: " + pkmn.getNome());
-                        System.out.println("Numero de Pokedex: #" + String.format("%04d", pkmn.getId()));
-                        System.out.print("Tipo(s):");
-                        for (Tipo t : pkmn.getTipos()) {
-                            System.out.print(" " + t);
+                    if (!listaPkmn.isEmpty()) {
+                        for (Pokemon pkmn : listaPkmn) {
+                            Menu.exibirMenuPokemon(pkmn, 5);
                         }
-                        System.out.println("\nBase stats:");
-                        System.out.println("HP: " + pkmn.getBaseStats().getHp());
-                        System.out.println("Ataque: " + pkmn.getBaseStats().getAtaque());
-                        System.out.println("Defesa: " + pkmn.getBaseStats().getDefesa());
-                        System.out.println("Ataque especial: " + pkmn.getBaseStats().getAtaqueEspecial());
-                        System.out.println("Defesa especial: " + pkmn.getBaseStats().getDefesaEspecial());
-                        System.out.println("Velocidade: " + pkmn.getBaseStats().getVelocidade());
-                        System.out.println("BST: " + pkmn.calcularBST());
-                        PrintUtils.slowPrint("---------------------------------------------------", 10);
-                    }
-                    PrintUtils.slowPrint("Pokemons listados com sucesso!", 75);
+                        PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons listados com sucesso!", 50);
+                    } else System.out.println("Nao ha Pokemons para listar!");
                     break;
                 case 3:
                     sc.nextLine();
                     String nomeBusca = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    nomeBusca = nomeBusca.substring(0, 1).toUpperCase() + nomeBusca.substring(1);
                     try {
                         Pokemon pkmn = serv.buscarPorNome(nomeBusca);
-                        PrintUtils.slowPrint("---------------------------------------------------", 50);
-                        System.out.println("Nome: " + pkmn.getNome());
-                        System.out.println("Numero de Pokedex: #" + String.format("%04d", pkmn.getId()));
-                        System.out.print("Tipo(s):");
-                        for (Tipo t : pkmn.getTipos()) {
-                            System.out.print(" " + t);
-                        }
-                        System.out.println("\nBase stats:");
-                        System.out.println("HP: " + pkmn.getBaseStats().getHp());
-                        System.out.println("Ataque: " + pkmn.getBaseStats().getAtaque());
-                        System.out.println("Defesa: " + pkmn.getBaseStats().getDefesa());
-                        System.out.println("Ataque especial: " + pkmn.getBaseStats().getAtaqueEspecial());
-                        System.out.println("Defesa especial: " + pkmn.getBaseStats().getDefesaEspecial());
-                        System.out.println("Velocidade: " + pkmn.getBaseStats().getVelocidade());
-                        System.out.println("BST: " + pkmn.calcularBST());
-                        PrintUtils.slowPrint("---------------------------------------------------", 50);
-                        PrintUtils.slowPrint("Pokemon " + nomeBusca + " encontrado com sucesso!", 75);
+                        Menu.exibirMenuPokemon(pkmn, 50);
+                        PrintUtils.slowPrint("Pokemon " + nomeBusca + " encontrado com sucesso!", 50);
                     } catch (PokemonNaoEncontradoException e) {
                         System.out.println(e.getMessage());
                     }
@@ -198,22 +189,17 @@ public class Main {
                     sc.nextLine();
                     String nomeEdicao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
                     try {
-                        boolean loop = true;
                         Pokemon pkmn = serv.buscarPorNome(nomeEdicao);
-                        while (loop) {
-                            PrintUtils.slowPrint("====================", 50);
-                            PrintUtils.slowPrint("1. Editar nome", 50);
-                            PrintUtils.slowPrint("2. Editar tipo(s)", 50);
-                            PrintUtils.slowPrint("3. Editar stats", 50);
-                            PrintUtils.slowPrint("0. Encerrar edicao", 50);
-                            PrintUtils.slowPrint("====================", 50);
-                            int edicao = InputUtils.lerInt("Insira a opcao de edicao desejada: ", sc);
-                            while (edicao < 0 || edicao > 3) edicao = InputUtils.lerInt("Opcao invalida!\nInsira a opcao de edicao desejada: ", sc);
+                        int edicao = -1;
+                        do {
+                            Menu.exibirMenuEdicao(40);
+                            edicao = InputUtils.lerInt("Insira a opcao de edicao desejada: ", sc);
                             switch (edicao) {
                                 case 1:
                                     sc.nextLine();
                                     String novoNome = InputUtils.lerString("Insira o novo nome do Pokemon: ", sc);
-                                    pkmn.setNome(novoNome);
+                                    String novoNomePkmn = novoNome.substring(0, 1).toUpperCase() + novoNome.substring(1);
+                                    pkmn.setNome(novoNomePkmn);
                                     PrintUtils.slowPrint("Nome alterado com sucesso!", 75);
                                     break;
                                 case 2:
@@ -233,7 +219,7 @@ public class Main {
                                             novosTiposPkmn.add(novoTipoPkmn2);
                                         }
                                         pkmn.setTipos(novosTiposPkmn);
-                                        PrintUtils.slowPrint("Tipo(s) alterado(s) com sucesso!", 75);
+                                        PrintUtils.slowPrint("Tipo(s) alterado(s) com sucesso!", 50);
                                     } catch (DadoInvalidoException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -248,16 +234,15 @@ public class Main {
                                     try {
                                         Stats novosBaseStats = new Stats(novoHp, novoAtaque, novaDefesa, novoAtaqueEspecial, novaDefesaEspecial, novaVelocidade);
                                         pkmn.setBaseStats(novosBaseStats);
-                                        PrintUtils.slowPrint("Stats base alterados com sucesso!", 75);
+                                        PrintUtils.slowPrint("Stats base alterados com sucesso!", 50);
                                     } catch (DadoInvalidoException e) {
                                         System.out.println(e.getMessage());
                                     }
                                     break;
-                                case 0:
-                                    loop = false;
-                                    break;
+                                case 0: break;
+                                default: System.out.println("Opcao invalida!");
                             }
-                        }
+                        } while (edicao != 0);
                         int i = 0;
                         for (Pokemon p : pokemons) {
                             if (p.getId() == pkmn.getId()) break;
@@ -271,11 +256,18 @@ public class Main {
                 case 5:
                     sc.nextLine();
                     String nomeRemocao = InputUtils.lerString("Insira o nome do Pokemon para procura: ", sc);
+                    nomeRemocao = nomeRemocao.substring(0, 1).toUpperCase() + nomeRemocao.substring(1);
                     try {
                         Pokemon pkmn = serv.buscarPorNome(nomeRemocao);
-                        pokemons.remove(pkmn);
-                        serv.removerPokemon(nomeRemocao);
-                        PrintUtils.slowPrint("Pokemon " + nomeRemocao + " removido com sucesso!", 75);
+                        Menu.exibirMenuPokemon(pkmn, 50);
+                        String optionRemocao = InputUtils.lerString("Certeza que deseja remover " + pkmn.getNome() + "? (S/N | Esta acao nao tem volta): ", sc);
+                        while (!optionRemocao.equalsIgnoreCase("s") && !optionRemocao.equalsIgnoreCase("n")) {
+                            optionRemocao = InputUtils.lerString("Opcao invalida!\nCerteza que deseja remover " + pkmn.getNome() + "? (S/N | Esta acao nao tem volta): ", sc);
+                        }
+                        if (optionRemocao.equalsIgnoreCase("s")) {
+                            serv.removerPokemon(pkmn.getNome());
+                            PrintUtils.slowPrint("Pokemon " + nomeRemocao + " removido com sucesso!", 50);
+                        }
                     } catch (PokemonNaoEncontradoException e) {
                         System.out.println(e.getMessage());
                     }
@@ -330,6 +322,45 @@ public class Main {
                     }
                     break;
                 case 7:
+                    int optionStatistics = -1;
+                    String optionStat;
+                    Pokemon pkmn;
+                    do {
+                        Menu.exibirMenuEstatisticas(40);
+                        optionStatistics = InputUtils.lerInt("Insira a opcao desejada: ", sc);
+                        switch (optionStatistics) {
+                            case 1:
+                                sc.nextLine();
+                                optionStat = InputUtils.lerString("Insira o stat desejado: ", sc);
+                                try {
+                                    pkmn = serv.maiorStat(optionStat);
+                                    System.out.println("Pokemon de maior " + optionStat.toLowerCase() + ": " + pkmn.getNome());
+                                    System.out.println("Valor do stat " + optionStat.toLowerCase() + ": " + pkmn.statFromString(optionStat));
+                                } catch (PokemonNaoEncontradoException e) {
+                                    System.out.println(e.getMessage());
+                                } catch (DadoInvalidoException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                                break;
+                            case 2:
+                                sc.nextLine();
+                                optionStat = InputUtils.lerString("Insira o stat desejado: ", sc);
+                                try {
+                                    pkmn = serv.menorStat(optionStat);
+                                    System.out.println("Pokemon de menor " + optionStat.toLowerCase() + ": " + pkmn.getNome());
+                                    System.out.println("Valor do stat " + optionStat.toLowerCase() + ": " + pkmn.statFromString(optionStat));
+                                } catch (PokemonNaoEncontradoException e) {
+                                    System.out.println(e.getMessage());
+                                } catch (DadoInvalidoException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                                break;
+                            case 0: break;
+                            default: System.out.println("Opcao invalida!");
+                        }
+                    } while (optionStatistics != 0);
+                    break;
+                case 8:
                     try {
                         String optionDelete = InputUtils.lerString("Tem certeza que deseja limpar o arquivo 'pokemons.txt'? (S/N | Esta acao nao tem volta): ", sc);
                         while (!optionDelete.equalsIgnoreCase("s") && !optionDelete.equalsIgnoreCase("n")) {
@@ -337,7 +368,7 @@ public class Main {
                         }
                         if (optionDelete.equalsIgnoreCase("s")) {
                             repo.limparArquivo();
-                            PrintUtils.slowPrint("Arquivo limpo com sucesso!", 75);
+                            PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram removidos do arquivo com sucesso!", 50);
                         }
                     } catch (IOException e) {
                         System.out.println("Nao foi possivel limpar o arquivo!");
@@ -364,7 +395,7 @@ public class Main {
         if (optionArquivo.equalsIgnoreCase("s")) {
             try {
                 repo.escreverArquivo(pokemons);
-                PrintUtils.slowPrint("Pokemons salvos com sucesso!", 75);
+                PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram salvos com sucesso!", 50);
     
             } catch (IOException e) {
                 System.out.println("Nao foi possivel escrever no arquivo!");

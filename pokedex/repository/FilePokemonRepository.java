@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import pokedex.exception.PokemonNaoEncontradoException;
 import pokedex.model.*;
 import pokedex.util.FileUtils;
 
@@ -23,7 +22,7 @@ public class FilePokemonRepository implements PokemonRepository {
     }
     public boolean pokemonExiste(String nome) {
         for (Pokemon p : pkmn.values()) {
-            if (nome.equalsIgnoreCase(p.getNome())) return true;
+            if (p.getNome().equalsIgnoreCase(nome)) return true;
         }
         return false;
     }
@@ -36,19 +35,17 @@ public class FilePokemonRepository implements PokemonRepository {
     }
     public Pokemon buscarPorNome(String nome) {
         for (Pokemon p : pkmn.values()) {
-            if (nome.equalsIgnoreCase(p.getNome())) return p;
+            if (p.getNome().equalsIgnoreCase(nome)) return p;
         }
         return null;
     }
-    public void remover(String nome) throws PokemonNaoEncontradoException {
-        for (Pokemon p : pkmn.values()) {
-            if (nome.equalsIgnoreCase(p.getNome())) {
-                int id = p.getId();
-                pkmn.remove(id);
-                return;
-            }
-        }
-        throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
+    public void remover(int id) {
+        pkmn.remove(id);
+    }
+    public int contarPokemons() {
+        int count = 0;
+        while (count < pkmn.size()) count++;
+        return count;
     }
     public void escreverArquivo(List<Pokemon> pokemons) throws IOException {
         List<String> linhas = new ArrayList<>();

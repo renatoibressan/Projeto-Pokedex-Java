@@ -23,24 +23,24 @@ public enum Tipo {
     FADA;
     public static Tipo fromString(String valor) throws DadoInvalidoException {
         switch (valor.toLowerCase()) {
-            case "grama": return GRAMA;
-            case "fogo": return FOGO;
-            case "agua": return AGUA;
             case "normal": return NORMAL;
-            case "eletrico": return ELETRICO;
-            case "psiquico": return PSIQUICO;
-            case "lutador": return LUTADOR;
-            case "pedra": return PEDRA;
-            case "terrestre": return TERRESTRE;
-            case "voador": return VOADOR;
-            case "inseto": return INSETO;
-            case "veneno": return VENENO;
-            case "sombrio": return SOMBRIO;
-            case "fantasma": return FANTASMA;
-            case "gelo": return GELO;
-            case "aco": return ACO;
-            case "dragao": return DRAGAO;
-            case "fada": return FADA;
+            case "grama": case "grass": return GRAMA;
+            case "fogo": case "fire": return FOGO;
+            case "agua": case "water": return AGUA;
+            case "eletrico": case "electric": return ELETRICO;
+            case "psiquico": case "psychic": return PSIQUICO;
+            case "lutador": case "fighting": return LUTADOR;
+            case "pedra": case "rock": return PEDRA;
+            case "terrestre": case "ground": return TERRESTRE;
+            case "voador": case "flying": return VOADOR;
+            case "inseto": case "bug": return INSETO;
+            case "veneno": case "poison": return VENENO;
+            case "sombrio": case "dark": return SOMBRIO;
+            case "fantasma": case "ghost": return FANTASMA;
+            case "gelo": case "ice": return GELO;
+            case "aco": case "steel": return ACO;
+            case "dragao": case "dragon": return DRAGAO;
+            case "fada": case "fairy": return FADA;
             default: throw new DadoInvalidoException("Tipo invalido!");
         }
     }

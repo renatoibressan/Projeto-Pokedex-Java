@@ -115,6 +115,17 @@ public class Pokemon {
         int speedBase = baseStats.getVelocidade();
         return hpBase + atkBase + defBase + spAtkBase + spDefBase + speedBase;
     }
+    public int statFromString(String valor) throws DadoInvalidoException {
+        switch (valor.toLowerCase()) {
+            case "hp": return baseStats.getHp();
+            case "ataque": return baseStats.getAtaque();
+            case "defesa": return baseStats.getDefesa();
+            case "ataque especial": return baseStats.getAtaqueEspecial();
+            case "defesa especial": return baseStats.getDefesaEspecial();
+            case "velocidade": return baseStats.getVelocidade();
+            default: throw new DadoInvalidoException("Stat inexistente!");
+        }
+    }
     public String toFileString() {
         StringBuilder tipoString = new StringBuilder();
         for (Tipo tipo : tipos) {
