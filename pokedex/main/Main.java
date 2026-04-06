@@ -40,6 +40,7 @@ public class Main {
             if (optionArquivo.equalsIgnoreCase("s")) {
                 try {
                     pokemons = repo.lerArquivo();
+                    repo.inserirPokemons(pokemons);
                     serv.putPokemons(pokemons);
                     OutputUtils.slowPrint(repo.contarPokemons() + " Pokemons foram carregados com sucesso!", 50);
                 } catch (IOException e) {
