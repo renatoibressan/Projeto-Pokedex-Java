@@ -40,6 +40,8 @@ public class BatalhaService {
             danoP1 = (golpeP1.getCategoria().equals("fisico")) ? calcularDanoFisico(primeiro, segundo, golpeP1) : calcularDanoEspecial(primeiro, segundo, golpeP1);
             danoP1 += calcularSTAB(primeiro, golpeP1, danoP1);
             danoP1 *= calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos());
+            if (calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos()) <= 0.5) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " nao foi muito eficaz!", 50);
+            else if (calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos()) >= 2) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " foi super-eficaz!", 50);
             hpPerdido = (vidaP2 < (int)danoP1) ? vidaP2 : (int)danoP1;
             vidaP2 -= (int)danoP1;
             if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 50);
@@ -66,12 +68,14 @@ public class BatalhaService {
             danoP2 = (golpeP2.getCategoria().equals("fisico")) ? calcularDanoFisico(segundo, primeiro, golpeP2) : calcularDanoEspecial(segundo, primeiro, golpeP2);
             danoP2 += calcularSTAB(segundo, golpeP2, danoP2);
             danoP2 *= calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos());
+            if (calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos()) <= 0.5) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " nao foi muito eficaz!", 50);
+            else if (calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos()) >= 2) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " foi super-eficaz!", 50);
             hpPerdido = (vidaP1 < (int)danoP2) ? vidaP1 : (int)danoP2;
             vidaP1 -= (int)danoP2;
             if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 50);
             else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
             if (vidaP1 <= 0) {
-                if (turno == 1) OutputUtils.slowPrint("O golpe " + golpeP2 + " foi um OH-KO!", 50);
+                if (turno == 1) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " foi um OH-KO!", 50);
                 else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
                 OutputUtils.slowPrint("---------------------------------------------------------", 50);
                 return segundo;
