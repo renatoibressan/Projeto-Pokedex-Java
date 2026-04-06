@@ -12,12 +12,12 @@ import pokedex.repository.FilePokemonRepository;
 import pokedex.service.*;
 import pokedex.ui.Menu;
 import pokedex.util.InputUtils;
-import pokedex.util.PrintUtils;
+import pokedex.util.OutputUtils;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        PrintUtils.slowPrint("=============== POKEDEX MODULAR ===============", 40);
-        PrintUtils.slowPrint("Desenvolvido por: Renato Ikeda Bressan", 40);
+        OutputUtils.slowPrint("=============== POKEDEX MODULAR ===============", 40);
+        OutputUtils.slowPrint("Desenvolvido por: Renato Ikeda Bressan", 40);
         Scanner sc = new Scanner(System.in);
         int option = -1;
         String optionArquivo;
@@ -33,16 +33,15 @@ public class Main {
             System.out.println("Nao foi possivel carregar o arquivo!");
         }
         if (arquivoPkmn.exists() && arquivoPkmn.length() > 0) {
-            optionArquivo = InputUtils.lerString("Deseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
+            optionArquivo = InputUtils.lerString("Deseja carregar os Pokemons do arquivo? (S/N): ", sc);
             while (!optionArquivo.equalsIgnoreCase("s") && !optionArquivo.equalsIgnoreCase("n")) {
-                optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja carregar os Pokemons de 'pokemons.txt'? (S/N): ", sc);
+                optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja carregar os Pokemons do arquivo? (S/N): ", sc);
             }
             if (optionArquivo.equalsIgnoreCase("s")) {
                 try {
                     pokemons = repo.lerArquivo();
                     serv.putPokemons(pokemons);
-                    repo.inserirPokemons(pokemons);
-                    PrintUtils.slowPrint(repo.contarPokemons() + " Pokemons foram carregados com sucesso!", 50);
+                    OutputUtils.slowPrint(repo.contarPokemons() + " Pokemons foram carregados com sucesso!", 50);
                 } catch (IOException e) {
                     System.out.println("Nao foi possivel ler o arquivo!");
                 }
@@ -152,7 +151,7 @@ public class Main {
                             int id = serv.gerarNovoId();
                             p.setId(id);
                             serv.cadastrarPokemon(nomePkmn, tiposPkmn, statsPkmn, id);
-                            PrintUtils.slowPrint("Pokemon " + p.getNome() + " cadastrado com sucesso!", 75);
+                            OutputUtils.slowPrint("Pokemon " + p.getNome() + " cadastrado com sucesso!", 50);
                             System.out.println("Numero de Pokedex: #" + String.format("%04d", p.getId()));
                             System.out.print("Tipo(s):");
                             for (Tipo t : p.getTipos()) {
@@ -170,7 +169,7 @@ public class Main {
                         for (Pokemon pkmn : listaPkmn) {
                             Menu.exibirMenuPokemon(pkmn, 5);
                         }
-                        PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons listados com sucesso!", 50);
+                        OutputUtils.slowPrint(serv.contarListaPokemons() + " Pokemons listados com sucesso!", 50);
                     } else System.out.println("Nao ha Pokemons para listar!");
                     break;
                 case 3:
@@ -180,7 +179,7 @@ public class Main {
                     try {
                         Pokemon pkmn = serv.buscarPorNome(nomeBusca);
                         Menu.exibirMenuPokemon(pkmn, 50);
-                        PrintUtils.slowPrint("Pokemon " + nomeBusca + " encontrado com sucesso!", 50);
+                        OutputUtils.slowPrint("Pokemon " + nomeBusca + " encontrado com sucesso!", 50);
                     } catch (PokemonNaoEncontradoException e) {
                         System.out.println(e.getMessage());
                     }
@@ -200,7 +199,7 @@ public class Main {
                                     String novoNome = InputUtils.lerString("Insira o novo nome do Pokemon: ", sc);
                                     String novoNomePkmn = novoNome.substring(0, 1).toUpperCase() + novoNome.substring(1);
                                     pkmn.setNome(novoNomePkmn);
-                                    PrintUtils.slowPrint("Nome alterado com sucesso!", 75);
+                                    OutputUtils.slowPrint("Nome alterado com sucesso!", 50);
                                     break;
                                 case 2:
                                     sc.nextLine();
@@ -219,7 +218,7 @@ public class Main {
                                             novosTiposPkmn.add(novoTipoPkmn2);
                                         }
                                         pkmn.setTipos(novosTiposPkmn);
-                                        PrintUtils.slowPrint("Tipo(s) alterado(s) com sucesso!", 50);
+                                        OutputUtils.slowPrint("Tipo(s) alterado(s) com sucesso!", 50);
                                     } catch (DadoInvalidoException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -234,7 +233,7 @@ public class Main {
                                     try {
                                         Stats novosBaseStats = new Stats(novoHp, novoAtaque, novaDefesa, novoAtaqueEspecial, novaDefesaEspecial, novaVelocidade);
                                         pkmn.setBaseStats(novosBaseStats);
-                                        PrintUtils.slowPrint("Stats base alterados com sucesso!", 50);
+                                        OutputUtils.slowPrint("Stats base alterados com sucesso!", 50);
                                     } catch (DadoInvalidoException e) {
                                         System.out.println(e.getMessage());
                                     }
@@ -259,14 +258,13 @@ public class Main {
                     nomeRemocao = nomeRemocao.substring(0, 1).toUpperCase() + nomeRemocao.substring(1);
                     try {
                         Pokemon pkmn = serv.buscarPorNome(nomeRemocao);
-                        Menu.exibirMenuPokemon(pkmn, 50);
                         String optionRemocao = InputUtils.lerString("Certeza que deseja remover " + pkmn.getNome() + "? (S/N | Esta acao nao tem volta): ", sc);
                         while (!optionRemocao.equalsIgnoreCase("s") && !optionRemocao.equalsIgnoreCase("n")) {
                             optionRemocao = InputUtils.lerString("Opcao invalida!\nCerteza que deseja remover " + pkmn.getNome() + "? (S/N | Esta acao nao tem volta): ", sc);
                         }
                         if (optionRemocao.equalsIgnoreCase("s")) {
                             serv.removerPokemon(pkmn.getNome());
-                            PrintUtils.slowPrint("Pokemon " + nomeRemocao + " removido com sucesso!", 50);
+                            OutputUtils.slowPrint("Pokemon " + nomeRemocao + " removido com sucesso!", 50);
                         }
                     } catch (PokemonNaoEncontradoException e) {
                         System.out.println(e.getMessage());
@@ -311,7 +309,7 @@ public class Main {
                             p2.setNivel(nivelP2);
                             p2.setStats(p2.getBaseStats(), p2.getNature(), p2.getNivel());
                             Pokemon vencedor = battle.batalhar(p1, p2, sc);
-                            PrintUtils.slowPrint("O Pokemon vencedor foi " + vencedor.getNome() + "!", 75);
+                            OutputUtils.slowPrint("O Pokemon vencedor foi " + vencedor.getNome() + "!", 50);
                         } catch (DadoInvalidoException e) {
                             System.out.println("Nao foi possivel executar a batalha: " + e.getMessage());
                             break;
@@ -362,13 +360,13 @@ public class Main {
                     break;
                 case 8:
                     try {
-                        String optionDelete = InputUtils.lerString("Tem certeza que deseja limpar o arquivo 'pokemons.txt'? (S/N | Esta acao nao tem volta): ", sc);
+                        String optionDelete = InputUtils.lerString("Tem certeza que deseja limpar o arquivo? (S/N | Esta acao nao tem volta): ", sc);
                         while (!optionDelete.equalsIgnoreCase("s") && !optionDelete.equalsIgnoreCase("n")) {
-                            optionDelete = InputUtils.lerString("Opcao invalida!\nTem certeza que deseja limpar o arquivo 'pokemons.txt'? (S/N | Esta acao nao tem volta): ", sc);
+                            optionDelete = InputUtils.lerString("Opcao invalida!\nTem certeza que deseja limpar o arquivo? (S/N | Esta acao nao tem volta): ", sc);
                         }
                         if (optionDelete.equalsIgnoreCase("s")) {
                             repo.limparArquivo();
-                            PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram removidos do arquivo com sucesso!", 50);
+                            OutputUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram removidos do arquivo com sucesso!", 50);
                         }
                     } catch (IOException e) {
                         System.out.println("Nao foi possivel limpar o arquivo!");
@@ -376,34 +374,33 @@ public class Main {
                     break;
                 case 0:
                     System.out.print("Retornando ao inicio");
-                    Thread.sleep(750);
-                    PrintUtils.slowPrint("...", 150);
+                    Thread.sleep(500);
+                    OutputUtils.slowPrint("...", 150);
                     break;
                 default:
                     System.out.println("Opcao invalida!");
                     sc.nextLine();
                     System.out.print("Retornando ao menu do programa principal");
-                    Thread.sleep(750);
-                    PrintUtils.slowPrint("...", 150);
+                    Thread.sleep(500);
+                    OutputUtils.slowPrint("...", 150);
             }
         } while (option != 0);
         sc.nextLine();
-        optionArquivo = InputUtils.lerString("Deseja salvar os Pokemons em 'pokemons.txt'? (S/N): ", sc);
+        optionArquivo = InputUtils.lerString("Deseja salvar os Pokemons no arquivo? (S/N): ", sc);
         while (!optionArquivo.equalsIgnoreCase("s") && !optionArquivo.equalsIgnoreCase("n")) {
-            optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja salvar os Pokemons em 'pokemons.txt'? (S/N): ", sc);
+            optionArquivo = InputUtils.lerString("Opcao invalida!\nDeseja salvar os Pokemons no arquivo? (S/N): ", sc);
         }
         if (optionArquivo.equalsIgnoreCase("s")) {
             try {
                 repo.escreverArquivo(pokemons);
-                PrintUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram salvos com sucesso!", 50);
-    
+                OutputUtils.slowPrint(serv.contarListaPokemons() + " Pokemons foram salvos com sucesso!", 50);
             } catch (IOException e) {
                 System.out.println("Nao foi possivel escrever no arquivo!");
             }
         }
         System.out.print("Encerrando o programa");
-        Thread.sleep(750);
-        PrintUtils.slowPrint("...", 150);
+        Thread.sleep(500);
+        OutputUtils.slowPrint("...", 150);
         sc.close();
     }
 }

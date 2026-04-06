@@ -97,7 +97,7 @@ public class Pokemon {
         if (nivel < 1 || nivel > 100) throw new DadoInvalidoException("Pokemon deve ser de nivel 1 a 100!");
         this.nivel = nivel;
     }
-    public  List<Golpe> getGolpes() {
+    public List<Golpe> getGolpes() {
         return golpes;
     }
     public void setGolpes(List<Golpe> golpes) throws DadoInvalidoException {
@@ -107,13 +107,7 @@ public class Pokemon {
         this.golpes = golpes;
     }
     public int calcularBST() {
-        int hpBase = baseStats.getHp();
-        int atkBase = baseStats.getAtaque();
-        int defBase = baseStats.getDefesa();
-        int spAtkBase = baseStats.getAtaqueEspecial();
-        int spDefBase = baseStats.getDefesaEspecial();
-        int speedBase = baseStats.getVelocidade();
-        return hpBase + atkBase + defBase + spAtkBase + spDefBase + speedBase;
+        return baseStats.baseStatTotal();
     }
     public int statFromString(String valor) throws DadoInvalidoException {
         switch (valor.toLowerCase()) {

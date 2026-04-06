@@ -59,4 +59,7 @@ public class Stats {
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
     }
+    public int baseStatTotal() {
+        return hp + ataque + defesa + ataqueEspecial + defesaEspecial + velocidade;
+    }
 }

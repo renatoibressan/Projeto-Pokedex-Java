@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 import pokedex.model.*;
 import pokedex.util.InputUtils;
-import pokedex.util.PrintUtils;
+import pokedex.util.OutputUtils;
 
 public class BatalhaService {
     private TypeEffectivenessService effect;
@@ -20,8 +20,8 @@ public class BatalhaService {
         Pokemon segundo = definirSegundo(p1, p2);
         int vidaP1 = primeiro.getStats().getHp();
         int vidaP2 = segundo.getStats().getHp();
-        PrintUtils.slowPrint("---------------------------------------------------------", 50);
-        PrintUtils.slowPrint("Batalha entre " + primeiro.getNome() + " e " + segundo.getNome() + " iniciada!", 50);
+        OutputUtils.slowPrint("---------------------------------------------------------", 50);
+        OutputUtils.slowPrint("Batalha entre " + primeiro.getNome() + " e " + segundo.getNome() + " iniciada!", 50);
         while (true) {
             turno++;
             System.out.print("\n");
@@ -42,12 +42,12 @@ public class BatalhaService {
             danoP1 *= calcularEficaciaDeTipo(golpeP1.getTipo(), segundo.getTipos());
             hpPerdido = (vidaP2 < (int)danoP1) ? vidaP2 : (int)danoP1;
             vidaP2 -= (int)danoP1;
-            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 50);
-            else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
+            if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 50);
+            else OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
             if (vidaP2 <= 0) {
-                if (turno == 1) PrintUtils.slowPrint("\nO golpe " + golpeP1 + " foi um OH-KO!", 50);
-                else PrintUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 50);
-                PrintUtils.slowPrint("---------------------------------------------------------", 50);
+                if (turno == 1) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " foi um OH-KO!", 50);
+                else OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                OutputUtils.slowPrint("---------------------------------------------------------", 50);
                 return primeiro;
             }
             System.out.print("\n");
@@ -68,12 +68,12 @@ public class BatalhaService {
             danoP2 *= calcularEficaciaDeTipo(golpeP2.getTipo(), primeiro.getTipos());
             hpPerdido = (vidaP1 < (int)danoP2) ? vidaP1 : (int)danoP2;
             vidaP1 -= (int)danoP2;
-            if (hpPerdido == 0) PrintUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 50);
-            else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
+            if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 50);
+            else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
             if (vidaP1 <= 0) {
-                if (turno == 1) PrintUtils.slowPrint("O golpe " + golpeP2 + " foi um OH-KO!", 50);
-                else PrintUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
-                PrintUtils.slowPrint("---------------------------------------------------------", 50);
+                if (turno == 1) OutputUtils.slowPrint("O golpe " + golpeP2 + " foi um OH-KO!", 50);
+                else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                OutputUtils.slowPrint("---------------------------------------------------------", 50);
                 return segundo;
             }
         }

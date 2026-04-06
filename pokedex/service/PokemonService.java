@@ -1,5 +1,6 @@
 package pokedex.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class PokemonService {
     private List<Pokemon> pokemons;
     public PokemonService(PokemonRepository repository) {
         this.repository = repository;
+        pokemons = new ArrayList<>();
     }
     public void putPokemons(List<Pokemon> pokemons) {
         this.pokemons = pokemons;
@@ -38,10 +40,9 @@ public class PokemonService {
         return pkmn;
     }
     public void removerPokemon(String nome) throws PokemonNaoEncontradoException {
-        int id;
         for (Pokemon p : pokemons) {
             if (p.getNome().equalsIgnoreCase(nome)) {
-                id = p.getId();
+                int id = p.getId();
                 repository.remover(id);
                 pokemons.remove(p);
                 return;
@@ -50,9 +51,7 @@ public class PokemonService {
         throw new PokemonNaoEncontradoException("Pokemon nao encontrado!");
     }
     public int contarListaPokemons() {
-        int count = 0;
-        while (count < pokemons.size()) count++;
-        return count;
+        return pokemons.size();
     }
     public Pokemon maiorStat(String optionStat) throws PokemonNaoEncontradoException, DadoInvalidoException {
         if (pokemons.isEmpty()) throw new PokemonNaoEncontradoException("Lista de Pokemons vazia!");
