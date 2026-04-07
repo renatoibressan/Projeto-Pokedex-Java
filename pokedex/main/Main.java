@@ -281,13 +281,17 @@ public class Main {
                         p2 = serv.buscarPorNome(nomeP2);
                         List<Golpe> golpesP1 = new ArrayList<>();
                         List<Golpe> golpesP2 = new ArrayList<>();
-                        String golpe1P1 = InputUtils.lerString("Insira um golpe para " + p1.getNome() + ": ", sc);
-                        String golpe2P1 = InputUtils.lerString("Insira outro golpe para " + p1.getNome() + ": ", sc);
+                        String golpe1P1 = InputUtils.lerString("Insira um primeiro golpe para " + p1.getNome() + ": ", sc);
+                        String golpe2P1 = InputUtils.lerString("Insira um segundo golpe para " + p1.getNome() + ": ", sc);
+                        String golpe3P1 = InputUtils.lerString("Insira um terceiro golpe para " + p1.getNome() + ": ", sc);
+                        String golpe4P1 = InputUtils.lerString("Insira um ultimo golpe para " + p1.getNome() + ": ", sc);
                         String nature1 = InputUtils.lerString("Insira a nature de " + p1.getNome() + ": ", sc);
                         int nivelP1 = InputUtils.lerInt("Insira o nivel de " + p1.getNome() + ": ", sc);
                         sc.nextLine();
-                        String golpe1P2 = InputUtils.lerString("Insira um golpe para " + p2.getNome() + ": ", sc);
-                        String golpe2P2 = InputUtils.lerString("Insira outro golpe para " + p2.getNome() + ": ", sc);
+                        String golpe1P2 = InputUtils.lerString("Insira um primeiro golpe para " + p2.getNome() + ": ", sc);
+                        String golpe2P2 = InputUtils.lerString("Insira um segundo golpe para " + p2.getNome() + ": ", sc);
+                        String golpe3P2 = InputUtils.lerString("Insira um terceiro golpe para " + p2.getNome() + ": ", sc);
+                        String golpe4P2 = InputUtils.lerString("Insira um ultimo golpe para " + p2.getNome() + ": ", sc);
                         String nature2 = InputUtils.lerString("Insira a nature de " + p2.getNome() + ": ", sc);
                         int nivelP2 = InputUtils.lerInt("Insira o nivel de " + p2.getNome() + ": ", sc);
                         try {
@@ -295,6 +299,10 @@ public class Main {
                             golpesP1.add(golpeP1n1);
                             Golpe golpeP1n2 = Golpe.fromString(golpe2P1);
                             golpesP1.add(golpeP1n2);
+                            Golpe golpeP1n3 = Golpe.fromString(golpe3P1);
+                            golpesP1.add(golpeP1n3);
+                            Golpe golpeP1n4 = Golpe.fromString(golpe4P1);
+                            golpesP1.add(golpeP1n4);
                             Nature natureP1 = Nature.fromString(nature1);
                             p1.setGolpes(golpesP1);
                             p1.setNature(natureP1);
@@ -304,6 +312,10 @@ public class Main {
                             golpesP2.add(golpeP2n1);
                             Golpe golpeP2n2 = Golpe.fromString(golpe2P2);
                             golpesP2.add(golpeP2n2);
+                            Golpe golpeP2n3 = Golpe.fromString(golpe3P2);
+                            golpesP2.add(golpeP2n3);
+                            Golpe golpeP2n4 = Golpe.fromString(golpe4P2);
+                            golpesP2.add(golpeP2n4);
                             Nature natureP2 = Nature.fromString(nature2);
                             p2.setGolpes(golpesP2);
                             p2.setNature(natureP2);

@@ -38,7 +38,13 @@ public enum Golpe {
     ICE_BEAM(Tipo.GELO, "especial", 90),
     FLASH_CANNON(Tipo.ACO, "especial", 90),
     DRACO_METEOR(Tipo.DRAGAO, "especial", 130),
-    MOONBLAST(Tipo.FADA, "especial", 95);
+    MOONBLAST(Tipo.FADA, "especial", 95),
+    RECOVER(Tipo.NORMAL, "status", 0),
+    SWORDS_DANCE(Tipo.NORMAL, "status", 0),
+    IRON_DEFENSE(Tipo.ACO, "status", 0),
+    NASTY_PLOT(Tipo.SOMBRIO, "status", 0),
+    AMNESIA(Tipo.PSIQUICO, "status", 0),
+    AGILITY(Tipo.PSIQUICO, "status", 0);
     private final Tipo tipo;
     private final String categoria;
     private final int danoBase;
@@ -55,6 +61,9 @@ public enum Golpe {
     }
     public int getDanoBase() {
         return danoBase;
+    }
+    public boolean golpeDeStatus() {
+        return getCategoria().equalsIgnoreCase("status");
     }
     public static Golpe fromString(String valor) throws DadoInvalidoException {
         switch (valor.toLowerCase()) {
@@ -94,7 +103,13 @@ public enum Golpe {
             case "draco meteor": return DRACO_METEOR;
             case "play rough": return PLAY_ROUGH;
             case "moonblast": return MOONBLAST;
-            default: throw new DadoInvalidoException("Ataque invalido!");
+            case "recover": return RECOVER;
+            case "swords dance": return SWORDS_DANCE;
+            case "iron defense": return IRON_DEFENSE;
+            case "nasty plot": return NASTY_PLOT;
+            case "amnesia": return AMNESIA;
+            case "agility": return AGILITY;
+            default: throw new DadoInvalidoException("Golpe invalido!");
         }
     }
 }
