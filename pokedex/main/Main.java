@@ -49,7 +49,7 @@ public class Main {
             }
         }
         do {
-            Menu.exibirMenuPrincipal(20);
+            Menu.exibirMenuPrincipal(10);
             option = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
             switch (option) {
                 case 1:
@@ -167,8 +167,12 @@ public class Main {
                 case 2:
                     List<Pokemon> listaPkmn = serv.listarPokemons();
                     if (!listaPkmn.isEmpty()) {
+                        OutputUtils.slowPrint("---------------------------------------------------------", 10);
                         for (Pokemon pkmn : listaPkmn) {
-                            Menu.exibirMenuPokemon(pkmn, 5);
+                            System.out.println("Pokemon #" + String.format("%04d", pkmn.getId()) + ": " + pkmn.getNome());
+                            System.out.print("Tipo(s) de " + pkmn.getNome() + ":");
+                            for (Tipo t : pkmn.getTipos()) System.out.print(" " + t);
+                            OutputUtils.slowPrint("\n---------------------------------------------------------", 10);
                         }
                         OutputUtils.slowPrint(serv.contarListaPokemons() + " Pokemons listados com sucesso!", 50);
                     } else System.out.println("Nao ha Pokemons para listar!");
@@ -192,7 +196,7 @@ public class Main {
                         Pokemon pkmn = serv.buscarPorNome(nomeEdicao);
                         int edicao = -1;
                         do {
-                            Menu.exibirMenuEdicao(40);
+                            Menu.exibirMenuEdicao(20);
                             edicao = InputUtils.lerInt("Insira a opcao de edicao desejada: ", sc);
                             switch (edicao) {
                                 case 1:
@@ -273,6 +277,7 @@ public class Main {
                     break;
                 case 6:
                     Pokemon p1 = null, p2 = null;
+                    int i;
                     sc.nextLine();
                     String nomeP1 = InputUtils.lerString("Insira um nome para procura de um Pokemon: ", sc);
                     String nomeP2 = InputUtils.lerString("Insira um nome para procura do Pokemon oponente: ", sc);
@@ -281,41 +286,43 @@ public class Main {
                         p2 = serv.buscarPorNome(nomeP2);
                         List<Golpe> golpesP1 = new ArrayList<>();
                         List<Golpe> golpesP2 = new ArrayList<>();
-                        String golpe1P1 = InputUtils.lerString("Insira um primeiro golpe para " + p1.getNome() + ": ", sc);
-                        String golpe2P1 = InputUtils.lerString("Insira um segundo golpe para " + p1.getNome() + ": ", sc);
-                        String golpe3P1 = InputUtils.lerString("Insira um terceiro golpe para " + p1.getNome() + ": ", sc);
-                        String golpe4P1 = InputUtils.lerString("Insira um ultimo golpe para " + p1.getNome() + ": ", sc);
+                        i = 1;
+                        while (i <= 4) {
+                            String golpes1 = InputUtils.lerString("Insira o " + i + "o golpe de " + p1.getNome() + " ou 0 para fechar a lista de golpes (min.1, max.4): ", sc);
+                            if (golpes1.equalsIgnoreCase("0") && !golpesP1.isEmpty()) break;
+                            try {
+                                Golpe golpeP1 = Golpe.fromString(golpes1);
+                                golpesP1.add(golpeP1);
+                                System.out.println("Golpe " + golpeP1 + " adicionado a " + p1.getNome() + " com sucesso!");
+                                i++;
+                            } catch (DadoInvalidoException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
                         String nature1 = InputUtils.lerString("Insira a nature de " + p1.getNome() + ": ", sc);
                         int nivelP1 = InputUtils.lerInt("Insira o nivel de " + p1.getNome() + ": ", sc);
                         sc.nextLine();
-                        String golpe1P2 = InputUtils.lerString("Insira um primeiro golpe para " + p2.getNome() + ": ", sc);
-                        String golpe2P2 = InputUtils.lerString("Insira um segundo golpe para " + p2.getNome() + ": ", sc);
-                        String golpe3P2 = InputUtils.lerString("Insira um terceiro golpe para " + p2.getNome() + ": ", sc);
-                        String golpe4P2 = InputUtils.lerString("Insira um ultimo golpe para " + p2.getNome() + ": ", sc);
+                        i = 1;
+                        while (i <= 4) {
+                            String golpes2 = InputUtils.lerString("Insira o " + i + "o golpe de " + p2.getNome() + " ou 0 para fechar a lista de golpes (min.1, max.4): ", sc);
+                            if (golpes2.equalsIgnoreCase("0") && !golpesP2.isEmpty()) break;
+                            try {
+                                Golpe golpeP2 = Golpe.fromString(golpes2);
+                                golpesP2.add(golpeP2);
+                                System.out.println("Golpe " + golpeP2 + " adicionado a " + p2.getNome() + " com sucesso!");
+                                i++;
+                            } catch (DadoInvalidoException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
                         String nature2 = InputUtils.lerString("Insira a nature de " + p2.getNome() + ": ", sc);
                         int nivelP2 = InputUtils.lerInt("Insira o nivel de " + p2.getNome() + ": ", sc);
                         try {
-                            Golpe golpeP1n1 = Golpe.fromString(golpe1P1);
-                            golpesP1.add(golpeP1n1);
-                            Golpe golpeP1n2 = Golpe.fromString(golpe2P1);
-                            golpesP1.add(golpeP1n2);
-                            Golpe golpeP1n3 = Golpe.fromString(golpe3P1);
-                            golpesP1.add(golpeP1n3);
-                            Golpe golpeP1n4 = Golpe.fromString(golpe4P1);
-                            golpesP1.add(golpeP1n4);
                             Nature natureP1 = Nature.fromString(nature1);
                             p1.setGolpes(golpesP1);
                             p1.setNature(natureP1);
                             p1.setNivel(nivelP1);
                             p1.setStats(p1.getBaseStats(), p1.getNature(), p1.getNivel());
-                            Golpe golpeP2n1 = Golpe.fromString(golpe1P2);
-                            golpesP2.add(golpeP2n1);
-                            Golpe golpeP2n2 = Golpe.fromString(golpe2P2);
-                            golpesP2.add(golpeP2n2);
-                            Golpe golpeP2n3 = Golpe.fromString(golpe3P2);
-                            golpesP2.add(golpeP2n3);
-                            Golpe golpeP2n4 = Golpe.fromString(golpe4P2);
-                            golpesP2.add(golpeP2n4);
                             Nature natureP2 = Nature.fromString(nature2);
                             p2.setGolpes(golpesP2);
                             p2.setNature(natureP2);
@@ -337,7 +344,7 @@ public class Main {
                     String optionStat;
                     Pokemon pkmn;
                     do {
-                        Menu.exibirMenuEstatisticas(40);
+                        Menu.exibirMenuEstatisticas(20);
                         optionStatistics = InputUtils.lerInt("Insira a opcao desejada: ", sc);
                         switch (optionStatistics) {
                             case 1:

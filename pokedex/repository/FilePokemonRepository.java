@@ -15,32 +15,37 @@ public class FilePokemonRepository implements PokemonRepository {
         pkmn = new TreeMap<>();
         this.caminhoArquivo = caminhoArquivo;
     }
-    public void inserirPokemons(List<Pokemon> pokemons) {
-        for (Pokemon p : pokemons) {
-            pkmn.put(p.getId(), p);
-        }
-    }
+    @Override
     public boolean pokemonExiste(String nome) {
         for (Pokemon p : pkmn.values()) {
             if (p.getNome().equalsIgnoreCase(nome)) return true;
         }
         return false;
     }
+    @Override
     public void salvar(Pokemon p) {
         pkmn.put(p.getId(), p);
     }
+    @Override
     public List<Pokemon> listar() {
         List<Pokemon> listaPokemon = new ArrayList<>(pkmn.values());
         return listaPokemon;
     }
+    @Override
     public Pokemon buscarPorNome(String nome) {
         for (Pokemon p : pkmn.values()) {
             if (p.getNome().equalsIgnoreCase(nome)) return p;
         }
         return null;
     }
+    @Override
     public void remover(int id) {
         pkmn.remove(id);
+    }
+    public void inserirPokemons(List<Pokemon> pokemons) {
+        for (Pokemon p : pokemons) {
+            pkmn.put(p.getId(), p);
+        }
     }
     public int contarPokemons() {
         int count = 0;

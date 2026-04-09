@@ -39,10 +39,21 @@ public class BatalhaService {
             while (opcaoGolpe < 1 || opcaoGolpe > 4) opcaoGolpe = InputUtils.lerInt("Opcao invalida!\nInsira uma das opcoes acima: ", sc);
             indexGolpes = opcaoGolpe - 1;
             golpeP1 = primeiro.getGolpes().get(indexGolpes);
+            System.out.print("\n");
+            System.out.println("Golpes de " + segundo.getNome() + ":");
+            i = 1;
+            for (Golpe g : segundo.getGolpes()) {
+                System.out.println(i + ". " + g);
+                i++;
+            }
+            opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
+            while (opcaoGolpe < 1 || opcaoGolpe > 4) opcaoGolpe = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
+            indexGolpes = opcaoGolpe - 1;
+            golpeP2 = segundo.getGolpes().get(indexGolpes);
             if (golpeP1.golpeDeStatus()) {
                 if (golpeP1 == Golpe.RECOVER) {
                     vidaP1 = calcularRecover(vidaP1, primeiro);
-                    OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " recuperou metade de seu HP!", 50);
+                    OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " recuperou parte de seu HP!", 50);
                 } else {
                     stat = statAumentadoStatus(golpeP1, primeiro);
                     OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " aumentou seu stat de " + stat + "!", 50);
@@ -58,30 +69,16 @@ public class BatalhaService {
                 if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " nao fez efeito em " + segundo.getNome() + "!", 50);
                 else OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
                 if (vidaP2 <= 0) {
-                    if (turno == 1) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " foi um OH-KO!", 50);
-                    else OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                    if (hpPerdido == segundo.getStats().getHp()) OutputUtils.slowPrint("\nO golpe " + golpeP1 + " foi um OH-KO!", 50);
+                    if (turno > 1) OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " desmaiou em " + turno + " turnos!", 50);
                     OutputUtils.slowPrint("---------------------------------------------------------", 50);
                     return primeiro;
                 }
             }
-            System.out.print("\n");
-            System.out.println(primeiro.getNome() + " Lv." + primeiro.getNivel() + ": " + vidaP1 + " / " + primeiro.getStats().getHp());
-            System.out.println(segundo.getNome() + " Lv." + segundo.getNivel() + ": " + vidaP2 + " / " + segundo.getStats().getHp());
-            System.out.print("\n");
-            System.out.println("Golpes de " + segundo.getNome() + ":");
-            i = 1;
-            for (Golpe g : segundo.getGolpes()) {
-                System.out.println(i + ". " + g);
-                i++;
-            }
-            opcaoGolpe = InputUtils.lerInt("Insira uma das opcoes acima: ", sc);
-            while (opcaoGolpe < 1 || opcaoGolpe > 4) opcaoGolpe = InputUtils.lerInt("Opcao invalida! Insira uma das opcoes acima: ", sc);
-            indexGolpes = opcaoGolpe - 1;
-            golpeP2 = segundo.getGolpes().get(indexGolpes);
             if (golpeP2.golpeDeStatus()) {
                 if (golpeP2 == Golpe.RECOVER) {
                     vidaP2 = calcularRecover(vidaP2, segundo);
-                    OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " recuperou metade de seu HP!", 50);
+                    OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " recuperou parte de seu HP!", 50);
                 } else {
                     stat = statAumentadoStatus(golpeP2, segundo);
                     OutputUtils.slowPrint("\nO Pokemon " + segundo.getNome() + " aumentou seu stat de " + stat + "!", 50);
@@ -97,8 +94,8 @@ public class BatalhaService {
                 if (hpPerdido == 0) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " nao fez efeito em " + primeiro.getNome() + "!", 50);
                 else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " perdeu " + hpPerdido + " pontos de vida!", 50);
                 if (vidaP1 <= 0) {
-                    if (turno == 1) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " foi um OH-KO!", 50);
-                    else OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
+                    if (hpPerdido == primeiro.getStats().getHp()) OutputUtils.slowPrint("\nO golpe " + golpeP2 + " foi um OH-KO!", 50);
+                    if (turno > 1) OutputUtils.slowPrint("\nO Pokemon " + primeiro.getNome() + " desmaiou em " + turno + " turnos!", 50);
                     OutputUtils.slowPrint("---------------------------------------------------------", 50);
                     return segundo;
                 }
