@@ -88,8 +88,10 @@ public class Main {
                             while (!optionTipoAnterior2.equalsIgnoreCase("s") && !optionTipoAnterior2.equalsIgnoreCase("n")) {
                                 optionTipoAnterior2 = InputUtils.lerString("Opcao invalida!\n" + txt2, sc);
                             }
-                            if (optionTipoAnterior2.equalsIgnoreCase("s")) tiposPkmn.add(anterior.getTipos().getLast());
-                            else {
+                            if (optionTipoAnterior2.equalsIgnoreCase("s")) {
+                                Tipo tipoAnterior2 = anterior.getTipos().getLast();
+                                tiposPkmn.add(tipoAnterior2);
+                            } else {
                                 String optionTipoSec = InputUtils.lerString("Deseja inserir um tipo secundario? (S/N): ", sc);
                                     while (!optionTipoSec.equalsIgnoreCase("s") && !optionTipoSec.equalsIgnoreCase("n")) {
                                     optionTipoSec = InputUtils.lerString("Opcao invalida!\nDeseja inserir um tipo secundario? (S/N): ", sc);
